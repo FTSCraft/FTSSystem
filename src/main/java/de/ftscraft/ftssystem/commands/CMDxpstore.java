@@ -19,85 +19,54 @@ public class CMDxpstore implements CommandExecutor {
         plugin.getCommand("xpstore").setExecutor(this);
     }
 
+    private static final int BOTTLES_REQUIRED = 2, LAPIS_REQUIRED = 8, REDSTONE_REQUIRED = 8;
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
 
         if (!(sender instanceof Player)) {
 
 
-            if(args.length == 1) {
+            if (args.length == 1) {
 
                 String playerName = args[0];
                 Player pl = Bukkit.getServer().getPlayer(playerName);
 
-                if(pl != null && pl.isOnline()) {
+                if (pl != null && pl.isOnline()) {
+                    int totalExp = pl.calculateTotalExperiencePoints();
+                    if (totalExp >= 20 && pl.getInventory().containsAtLeast(new ItemStack(Material.GLASS_BOTTLE), 2) && pl.getInventory().containsAtLeast(new ItemStack(Material.REDSTONE), 8) && pl.getInventory().containsAtLeast(new ItemStack(Material.LAPIS_LAZULI), 8)) {
 
-                    if(pl.getTotalExperience() >= 20 && pl.getInventory().containsAtLeast(new ItemStack(Material.GLASS_BOTTLE),2) && pl.getInventory().containsAtLeast(new ItemStack(Material.REDSTONE),8) && pl.getInventory().containsAtLeast(new ItemStack(Material.LAPIS_LAZULI),8)) {
-
-                        pl.setExperienceLevelAndProgress(pl.calculateTotalExperiencePoints()-20);
+                        pl.setExperienceLevelAndProgress(totalExp - 20);
 
                         int bottleDone = 0;
                         int redstoneDone = 0;
                         int lapisDone = 0;
 
-                        for(ItemStack item : pl.getInventory().getContents()) {
-                            if(item == null) {
+                        for (ItemStack item : pl.getInventory().getContents()) {
+                            if (item == null) {
                                 continue;
                             }
-
-                            if(item.getType() == Material.GLASS_BOTTLE && bottleDone != 2) {
-                                if(item.getAmount()>=2 && bottleDone==0) {
-                                    item.setAmount(item.getAmount() - 2);
-                                    bottleDone = 2;
-                                } else {
-                                    if(item.getAmount()<2) {
-                                        bottleDone=item.getAmount();
-                                        item.setAmount(0);
-                                    } else {
-                                        item.setAmount(item.getAmount()-(2-bottleDone));
-                                        bottleDone=bottleDone+(2-bottleDone);
-                                    }
-                                }
-                            } else if(item.getType() == Material.REDSTONE && redstoneDone != 8) {
-                                if(item.getAmount()>=8 && redstoneDone==0) {
-                                    item.setAmount(item.getAmount() - 8);
-                                    redstoneDone = 8;
-                                } else {
-                                    if(item.getAmount()<8) {
-                                        redstoneDone=item.getAmount();
-                                        item.setAmount(0);
-                                    } else {
-                                        item.setAmount(item.getAmount()-(8-redstoneDone));
-                                        redstoneDone=redstoneDone+(8-redstoneDone);
-                                    }
-                                }
-                            } else if(item.getType() == Material.LAPIS_LAZULI && lapisDone != 8) {
-                                if(item.getAmount()>=8 && lapisDone==0) {
-                                    item.setAmount(item.getAmount() - 8);
-                                    lapisDone = 8;
-                                } else {
-                                    if(item.getAmount()<8) {
-                                        lapisDone=item.getAmount();
-                                        item.setAmount(0);
-                                    } else {
-                                        item.setAmount(item.getAmount()-(8-lapisDone));
-                                        lapisDone=lapisDone+(8-lapisDone);
-                                    }
-                                }
-                            } else {
-                                sender.sendMessage("Der Spieler hat nicht genug Rohstoffe im Inventar.");
-
+                            if (item.getType() == Material.GLASS_BOTTLE && bottleDone != BOTTLES_REQUIRED) {
+                                int removeFromStack = Math.min(item.getAmount(), BOTTLES_REQUIRED - bottleDone);
+                                item.setAmount(item.getAmount() - removeFromStack);
+                                bottleDone += removeFromStack;
+                            } else if (item.getType() == Material.REDSTONE && bottleDone != REDSTONE_REQUIRED) {
+                                int removeFromStack = Math.min(item.getAmount(), REDSTONE_REQUIRED - redstoneDone);
+                                item.setAmount(item.getAmount() - removeFromStack);
+                                redstoneDone += removeFromStack;
+                            } else if (item.getType() == Material.LAPIS_LAZULI && bottleDone != LAPIS_REQUIRED) {
+                                int removeFromStack = Math.min(item.getAmount(), LAPIS_REQUIRED - lapisDone);
+                                item.setAmount(item.getAmount() - removeFromStack);
+                                lapisDone += removeFromStack;
                             }
                         }
-
-
 
                         ItemStack isExpBottle = new ItemStack(Material.EXPERIENCE_BOTTLE, 2);
                         pl.getInventory().addItem(isExpBottle);
 
                     }
                 } else {
-                    sender.sendMessage("Der Spieler '"+args[0]+"' konnte nicht gefunden werden!");
+                    sender.sendMessage("Der Spieler '" + args[0] + "' konnte nicht gefunden werden!");
                 }
 
                 return false;

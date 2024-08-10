@@ -121,6 +121,7 @@ public class FtsSystem extends JavaPlugin {
         new CMDrepair(this);
         new CMDxpstore(this);
 
+        new PortalListener(this);
         new DeathListener(this);
         new CommandListener(this);
         new ChatListener(this);
@@ -149,13 +150,13 @@ public class FtsSystem extends JavaPlugin {
 
             if (recipe instanceof FurnaceRecipe furnaceRecipe) {
 
-                if (furnaceRecipe.getInput().getType() == Material.RAW_GOLD) {
+                if (furnaceRecipe.getInput().getType() == Material.RAW_GOLD || furnaceRecipe.getInput().getType() == Material.GOLD_ORE) {
                     recipes.remove();
                 }
 
             } else if (recipe instanceof BlastingRecipe blastingRecipe) {
 
-                if (blastingRecipe.getInput().getType() == Material.RAW_GOLD) {
+                if (blastingRecipe.getInput().getType() == Material.RAW_GOLD || blastingRecipe.getInput().getType() == Material.GOLD_ORE) {
                     recipes.remove();
                 }
 
