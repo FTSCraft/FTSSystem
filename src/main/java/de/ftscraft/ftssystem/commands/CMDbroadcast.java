@@ -43,7 +43,7 @@ public class CMDbroadcast implements CommandExecutor {
             }
 
             for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-                onlinePlayer.sendMessage("[§cEin Bote berichtet§r] §a" + LegacyComponentSerializer.legacyAmpersand().deserialize(builder.toString()));
+                onlinePlayer.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("[§cEin Bote berichtet§r] §a" + builder));
             }
 
         }

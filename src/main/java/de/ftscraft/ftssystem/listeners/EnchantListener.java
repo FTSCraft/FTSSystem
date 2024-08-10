@@ -9,6 +9,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class EnchantListener implements Listener {
@@ -36,13 +39,17 @@ public class EnchantListener implements Listener {
     @EventHandler
     public void onEnchant(EnchantItemEvent event) {
         Map<Enchantment, Integer> enchantsToAdd = event.getEnchantsToAdd();
+        HashMap<Enchantment, Utils.EnchantmentWithLevel> replacements = new HashMap<>();
         enchantsToAdd.forEach((enchantment, lvl) -> {
             var replacement = Utils.enchantmentReplacements.get(new Utils.EnchantmentWithLevel(enchantment, lvl));
             if (replacement != null) {
-                enchantsToAdd.remove(replacement.enchantment());
-                enchantsToAdd.put(replacement.enchantment(), replacement.level());
+                replacements.put(enchantment, replacement);
             }
         });
+        replacements.forEach(((enchantment, replacement) -> {
+            enchantsToAdd.remove(enchantment);
+            enchantsToAdd.put(replacement.enchantment(), replacement.level());
+        }));
     }
 
 }
