@@ -177,8 +177,8 @@ public class Utils {
                 EnchantmentWithLevel enchantmentWithLevel = new EnchantmentWithLevel(enchantment, level);
                 EnchantmentWithLevel replace = enchantmentReplacements.get((enchantmentWithLevel));
                 if (replace != null) {
-                    itemStack.removeEnchantment(enchantment);
-                    itemStack.addEnchantment(replace.enchantment, replace.level);
+                    itemMeta.removeEnchant(enchantment);
+                    itemMeta.addEnchant(replace.enchantment, replace.level, true);
                 }
             });
 
