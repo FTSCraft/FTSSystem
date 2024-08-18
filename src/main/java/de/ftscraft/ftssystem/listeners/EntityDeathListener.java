@@ -29,6 +29,8 @@ public class EntityDeathListener implements Listener {
             event.getDrops().clear();
         } else if(event.getEntity().getType() == EntityType.WITHER_SKELETON) {
             event.getDrops().removeIf(drop -> drop.getType() == Material.COAL);
+        } else if(event.getEntity().getType() == EntityType.DROWNED) {
+            event.getDrops().removeIf(drop -> drop.getType() == Material.COPPER_INGOT);
         }
 
     }
