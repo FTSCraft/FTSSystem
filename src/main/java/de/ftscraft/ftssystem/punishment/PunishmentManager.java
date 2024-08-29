@@ -49,8 +49,8 @@ public class PunishmentManager {
 
                 if (punishment.isActive()) {
 
-                    if (punishment instanceof TempWarn) {
-                        if (((TemporaryPunishment) punishment).untilInMillis() < System.currentTimeMillis()) {
+                    if (punishment instanceof TemporaryPunishment temporaryPunishment) {
+                        if (temporaryPunishment.untilInMillis() < System.currentTimeMillis()) {
                             continue;
                         }
                     }
@@ -77,22 +77,6 @@ public class PunishmentManager {
             }
         }
 
-    }
-
-    public void loadPunishmentFromData(UUID player, PunishmentType type, String reason, UUID author, String moreInfo, long time, long until, int id, boolean active) {
-        Punishment pu;
-        switch (type) {
-            case WARN -> pu = new Warn(reason, author, time, player, moreInfo, id, active);
-            case TEMP_WARN -> pu = new TempWarn(reason, author, time, until, player, moreInfo, id, active);
-            case NOTE -> pu = new Note(reason, author, time, player, moreInfo, id, active);
-            case TEMP_BAN -> pu = new TempBan(reason, author, time, until, player, moreInfo, id, active);
-            case TEMP_MUTE -> pu = new TempMute(reason, author, time, until, player, moreInfo, id, active);
-            case BAN -> pu = new Ban(reason, author, time, player, moreInfo, id, active);
-            default -> {
-                return;
-            }
-        }
-        addPunishmentToPlayer(player, pu);
     }
 
     public void clearData(UUID player) {
@@ -196,9 +180,6 @@ public class PunishmentManager {
         //Get UUID from Player
         UUID uuid = UUIDFetcher.getUUID(playerName);
 
-        //Get Current Millis
-        long current = System.currentTimeMillis();
-
         long until = Utils.calculateUntil(unit);
         if (until == -1)
             return;
@@ -254,7 +235,7 @@ public class PunishmentManager {
 
         for (Player all : Bukkit.getOnlinePlayers()) {
             if (all.hasPermission("ftssystem.punish")) {
-                all.sendMessage(FtsSystem.PREFIX + "§c" + playerName + " §7wurde permanent von §c" + author + " §7wegen §c" + reason + " §7gebannt");
+                all.sendMessage(FtsSystem.PREFIX + "§c" + playerName + " §7wurde permanent von §c" + punishment.getAuthorName() + " §7wegen §c" + reason + " §7gebannt");
             }
         }
 

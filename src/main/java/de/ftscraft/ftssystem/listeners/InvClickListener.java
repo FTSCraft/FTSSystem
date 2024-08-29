@@ -5,14 +5,13 @@
 
 package de.ftscraft.ftssystem.listeners;
 
-import com.earth2me.essentials.commands.WarpNotFoundException;
 import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.main.User;
 import de.ftscraft.ftssystem.punishment.*;
 import de.ftscraft.ftssystem.utils.UUIDFetcher;
+import de.ftscraft.ftssystem.utils.hooks.EssentialsHook;
 import de.ftscraft.ftsutils.items.ItemReader;
-import net.ess3.api.InvalidWorldException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -250,7 +249,8 @@ public class InvClickListener implements Listener {
                     case ON -> u.setGlobalChannelStatus(User.ChannelStatusSwitch.OFF);
                 }
             } else if (id.equalsIgnoreCase("8")) {
-                plugin.getScoreboardManager().switchToRoleplayMode(u.getPlayer());
+                if (plugin.getScoreboardManager() != null)
+                    plugin.getScoreboardManager().switchToRoleplayMode(u.getPlayer());
             }
 
             u.refreshMenu();
@@ -261,12 +261,9 @@ public class InvClickListener implements Listener {
             if (is == null) return;
             String warp = ItemReader.getPDC(is, "SCROLL", PersistentDataType.STRING);
             if (warp == null) return;
-            Location warpLoc;
-            try {
-                warpLoc = plugin.getEssentialsPlugin().getWarps().getWarp(warp);
-            } catch (WarpNotFoundException | InvalidWorldException e) {
+            Location warpLoc = EssentialsHook.getWarpLocation(warp);
+            if (warpLoc == null)
                 return;
-            }
             event.getWhoClicked().closeInventory();
             event.getWhoClicked().teleport(warpLoc);
             event.getWhoClicked().getInventory().getItemInMainHand().setAmount(event.getWhoClicked().getInventory().getItemInMainHand().getAmount() - 1);

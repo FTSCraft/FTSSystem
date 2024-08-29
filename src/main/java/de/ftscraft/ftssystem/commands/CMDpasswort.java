@@ -13,12 +13,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class CMDpasswort implements CommandExecutor {
 
-    private final ArrayList<String> commands = new ArrayList<>(Arrays.asList("lp user %s promote spieler", "warp Hauptstadt_Kirche %s"));
+    private final String[] commands = {"lp user %s promote spieler", "warp kutschenplatz %s"};
 
     private final FtsSystem plugin;
 
@@ -53,10 +50,10 @@ public class CMDpasswort implements CommandExecutor {
 
                     user.setApproved(true);
 
-                    p.sendMessage("§cDu hast dich erfolgreich freigeschalten!");
+                    p.sendMessage("§cDu hast dich erfolgreich freigeschaltet!");
 
                 } else {
-                    p.sendMessage("§cDu hast dich bereits freigeschalten!");
+                    p.sendMessage("§cDu hast dich bereits freigeschaltet!");
                 }
 
             } else {

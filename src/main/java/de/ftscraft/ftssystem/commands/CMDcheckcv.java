@@ -4,6 +4,8 @@ import de.ftscraft.ftsengine.utils.Ausweis;
 import de.ftscraft.ftsengine.utils.Messages;
 import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.scoreboard.TeamPrefixs;
+import de.ftscraft.ftssystem.utils.hooks.EngineHook;
+import de.ftscraft.ftssystem.utils.hooks.ForumHook;
 import kong.unirest.UnirestException;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -43,7 +45,7 @@ public class CMDcheckcv implements CommandExecutor {
             return true;
         }
 
-        Ausweis ausweis = plugin.getEngine().getAusweis(p);
+        Ausweis ausweis = EngineHook.getEngine().getAusweis(p);
         if (ausweis == null) {
             p.sendMessage(Messages.PREFIX + "Du hast keinen Ausweis.");
             return true;
@@ -61,23 +63,23 @@ public class CMDcheckcv implements CommandExecutor {
 
         try {
 
-            Response response = plugin.getForumHook().isAcceptedCV(p.getName(), ausweis.getForumLink());
+            ForumHook.CheckCVResponse response = plugin.getForumHook().isAcceptedCV(p.getName(), ausweis.getForumLink());
 
-            if (response == Response.WRONG_URL) {
+            if (response == ForumHook.CheckCVResponse.WRONG_URL) {
                 p.sendMessage(Messages.PREFIX + "Da lief irgendwas falsch. Überprüfe am Besten mal den Link oder melde dich bei einem Teamler");
                 return true;
             }
-            if (response == Response.NOT_FROM_PLAYER) {
+            if (response == ForumHook.CheckCVResponse.NOT_FROM_PLAYER) {
                 p.sendMessage(Messages.PREFIX + "Es sieht so aus als wäre das nicht deine CV. Falls du denkst dass das Falsch ist melde dich gerne bei einem Teamler");
                 playersThatUsedCommand.add(p);
                 return true;
             }
-            if (response == Response.NOT_ACCEPTED) {
+            if (response == ForumHook.CheckCVResponse.NOT_ACCEPTED) {
                 p.sendMessage(Messages.PREFIX + "Es sieht so aus als wäre die CV noch nicht final akzeptiert. Falls doch, lass dir am besten von einem Teamler den Rang geben");
                 playersThatUsedCommand.add(p);
                 return true;
             }
-            if (response == Response.IS_ACCEPTED) {
+            if (response == ForumHook.CheckCVResponse.IS_ACCEPTED) {
                 p.sendMessage(Messages.PREFIX + "Sieht gut aus! Du solltest jetzt den Rang haben.");
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "lp user %s promote burger".replace("%s", p.getName()));
                 return true;
@@ -89,10 +91,6 @@ public class CMDcheckcv implements CommandExecutor {
 
 
         return false;
-    }
-
-    public enum Response {
-        WRONG_URL, NOT_FROM_PLAYER, NOT_ACCEPTED, IS_ACCEPTED
     }
 
 }

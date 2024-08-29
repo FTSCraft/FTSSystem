@@ -4,17 +4,13 @@ main: de.ftscraft.ftssystem.main.FtsSystem
 author: halberfan
 api-version: '1.20'
 depend:
-  - FTSEngine
   - FTSUtils
 softdepend:
   - LuckPerms
   - Essentials
-  - Factions
-  - ChestShop
-  - dynmap
-  - FTSPest
   - Towny
   - PlaceholderAPI
+  - FTSEngine
 
 commands:
   ftssystem:

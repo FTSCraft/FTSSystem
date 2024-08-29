@@ -7,7 +7,6 @@ package de.ftscraft.ftssystem.punishment;
 
 import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.main.FtsSystem;
-import de.ftscraft.ftssystem.utils.TimeUnits;
 import de.ftscraft.ftssystem.utils.Utils;
 import org.bukkit.entity.Player;
 
@@ -16,9 +15,9 @@ import java.util.UUID;
 
 public class PunishmentBuilder {
 
-    private PunishmentType type;
-    private String player;
-    private UUID author;
+    private final PunishmentType type;
+    private final String player;
+    private final UUID author;
     private String moreInfo;
     private String reason;
 
@@ -40,29 +39,12 @@ public class PunishmentBuilder {
         plugin.getPunishmentManager().getBuilders().put(player, this);
     }
 
-
     public PunishmentType getType() {
         return type;
     }
 
-    public void setType(PunishmentType type) {
-        this.type = type;
-    }
-
     public String getPlayer() {
         return player;
-    }
-
-    public void setPlayer(String player) {
-        this.player = player;
-    }
-
-    public UUID getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(UUID author) {
-        this.author = author;
     }
 
     public String getMoreInfo() {

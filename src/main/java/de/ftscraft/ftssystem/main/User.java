@@ -6,7 +6,6 @@
 package de.ftscraft.ftssystem.main;
 
 import de.ftscraft.ftssystem.channel.Channel;
-import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.menus.fts.FTSMenuInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -173,27 +172,11 @@ public class User {
         }
     }
 
-    public void leaveChannel(Channel channel) {
-        enabledChannels.remove(channel);
-        if (activeChannel == channel)
-            activeChannel = null;
-    }
-
     public void setActiveChannel(Channel activeChannel) {
         if (player.hasPermission(activeChannel.permission())) {
             this.activeChannel = activeChannel;
             if (!enabledChannels.contains(activeChannel))
                 enabledChannels.add(activeChannel);
-        }
-    }
-
-    public void toggleChannel(Channel channel) {
-        if (enabledChannels.contains(channel)) {
-            leaveChannel(channel);
-            player.sendMessage(Messages.LEFT_CHANNEL.replace("%s", channel.name()));
-        } else {
-            setActiveChannel(channel);
-            player.sendMessage(Messages.NOW_ACTIVE_CHANNEL.replace("%s", channel.name()));
         }
     }
 
@@ -239,10 +222,6 @@ public class User {
 
     public void setNoobProtection(boolean noobProtection) {
         this.noobProtection = noobProtection;
-    }
-
-    public void setMenu(FTSMenuInventory menu) {
-        this.menu = menu;
     }
 
     public void refreshMenu() {
@@ -311,11 +290,4 @@ public class User {
         this.oocChannelStatus = oocChannelStatus;
     }
 
-    public int getForumId() {
-        return forumId;
-    }
-
-    public void setForumId(int forumId) {
-        this.forumId = forumId;
-    }
 }

@@ -7,6 +7,7 @@ package de.ftscraft.ftssystem.scoreboard;
 
 import de.ftscraft.ftsengine.utils.Ausweis;
 import de.ftscraft.ftssystem.main.FtsSystem;
+import de.ftscraft.ftssystem.utils.hooks.EngineHook;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -118,7 +119,7 @@ public class FTSScoreboardManager {
                         if (isRanked.contains(onlinePlayer))
                             continue;
                         if (onlinePlayer.hasPermission(value.getPermission())) {
-                            Ausweis ausweis = plugin.getEngine().getAusweis(onlinePlayer);
+                            Ausweis ausweis = EngineHook.getEngine().getAusweis(onlinePlayer);
                             if (ausweis == null || ausweis.getGender() == null || ausweis.getGender() == Ausweis.Gender.MALE || ausweis.getGender() == Ausweis.Gender.DIVERS)
                                 team.addEntry(onlinePlayer.getName());
                             else if (ausweis.getGender() == Ausweis.Gender.FEMALE)
@@ -172,7 +173,7 @@ public class FTSScoreboardManager {
     }
 
     public void setPlayerPrefix(Player p) {
-        Ausweis ausweis = plugin.getEngine().getAusweis(p);
+        Ausweis ausweis = EngineHook.getEngine().getAusweis(p);
         Gender gender;
         if (ausweis != null)
             gender = ausweis.getGender();

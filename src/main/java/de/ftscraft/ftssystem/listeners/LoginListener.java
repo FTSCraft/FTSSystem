@@ -58,9 +58,12 @@ public class LoginListener implements Listener {
                 event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
                 event.kickMessage(LegacyComponentSerializer.legacySection().deserialize("""
                         §bGrüße!
+                        
                         Schön, dass du auf FTS spielen möchtest. Leider haben wir aber bei dir einen VPN festgestellt.
-                        Um rege Bann-Umgehungen zu verhindern, werden §cneue §bAccounts(nach der Freischaltung sind Proxys erlaubt), die einen VPN nutzen, §cblockiert§b.
-                        Bitte stelle dein VPN §caus, §boder, wenn du VPN/Proxy §cnicht ausschalten kannst§b, melde dich bei uns im §cDiscord§b."""));
+                        
+                        Um rege Bann-Umgehungen zu verhindern, werden §cneue §bAccounts (nach der Freischaltung sind Proxys erlaubt), die einen VPN nutzen, §cblockiert§b.
+                        
+                        Bitte stelle dein VPN §caus§b, oder, wenn du VPN/Proxy §cnicht ausschalten kannst§b, melde dich bei uns im §cDiscord§b."""));
                 return;
             }
         }

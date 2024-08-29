@@ -49,7 +49,8 @@ public class EssentialsListener implements Listener {
         Player t = Bukkit.getPlayer(event.getAffected().getName());
 
         if (t != null) {
-            plugin.getScoreboardManager().changeAfkStatus(t, event.getValue());
+            if (plugin.getScoreboardManager() != null)
+                plugin.getScoreboardManager().changeAfkStatus(t, event.getValue());
         }
 
     }

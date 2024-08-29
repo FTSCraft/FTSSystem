@@ -1,7 +1,7 @@
 package de.ftscraft.ftssystem.menus.scroll;
 
-import de.ftscraft.ftssystem.main.FtsSystem;
-import de.ftscraft.ftssystem.menus.FTSGUI;
+import de.ftscraft.ftssystem.utils.hooks.EssentialsHook;
+import de.ftscraft.ftssystem.utils.hooks.HookManager;
 import de.ftscraft.ftsutils.items.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -10,15 +10,24 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.persistence.PersistentDataType;
 
-public class ScrollGUI implements FTSGUI {
+import java.util.Collection;
+import java.util.LinkedList;
+
+public class ScrollGUI {
 
     private final Inventory inventory;
 
     public static ScrollGUI scrollGUI = null;
 
-    private ScrollGUI(FtsSystem plugin) {
+    private ScrollGUI() {
         inventory = Bukkit.createInventory(null, 9, Component.text("Schriftrolle").color(NamedTextColor.DARK_BLUE));
-        for (String s : plugin.getEssentialsPlugin().getWarps().getList()) {
+
+        Collection<String> warps;
+        if (!HookManager.ESSENTIALS_ENABLED)
+            warps = new LinkedList<>();
+        else warps = EssentialsHook.getWarps();
+
+        for (String s : warps) {
             if (s.startsWith("SCROLL_POINT")) {
                 inventory.addItem(new ItemBuilder(Material.PAPER)
                         .name(s.substring(12))
@@ -29,14 +38,13 @@ public class ScrollGUI implements FTSGUI {
         }
     }
 
-    @Override
     public Inventory getInventory() {
         return inventory;
     }
 
-    public static void init(FtsSystem plugin) {
+    public static void init() {
         if (scrollGUI == null)
-            scrollGUI = new ScrollGUI(plugin);
+            scrollGUI = new ScrollGUI();
     }
 
 }

@@ -3,7 +3,7 @@
  * halberfan - AfGMedia / AfGeSports
  */
 
-package de.ftscraft.ftssystem.utils;
+package de.ftscraft.ftssystem.punishment;
 
 public enum TimeUnits {
 
