@@ -20,6 +20,7 @@ import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.main.User;
 import de.ftscraft.ftssystem.scoreboard.TeamPrefixs;
 import de.ftscraft.ftssystem.utils.Utils;
+import de.ftscraft.ftssystem.utils.hooks.EngineHook;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -27,11 +28,11 @@ import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 
 
-public class ReichChatManager extends ChatManager {
+public class TownyChatManager extends ChatManager {
 
     final TownyAPI api;
 
-    public ReichChatManager(FtsSystem plugin) {
+    public TownyChatManager(FtsSystem plugin) {
         super(plugin);
         api = TownyAPI.getInstance();
     }
@@ -98,7 +99,6 @@ public class ReichChatManager extends ChatManager {
 
         String formatted = format(u, channel, msg);
 
-        TextComponent componentBuilder = Component.text(formatted).hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, Component.text(u.getPlayer().getName())));
         TextComponent c = buildComponent(formatted, u.getPlayer().getName());
 
         if (channel.type() == ChannelType.NORMAL || channel.type() == null) {
@@ -154,7 +154,7 @@ public class ReichChatManager extends ChatManager {
                 return;
             }
 
-            Town town = null;
+            Town town;
             try {
                 town = TownyAPI.getInstance().getResident(u.getPlayer()).getTown();
             } catch (NotRegisteredException e) {
@@ -175,10 +175,6 @@ public class ReichChatManager extends ChatManager {
                 }
             }
 
-        } else if (channel.type() == ChannelType.FACTION_ALLY) {
-
-            //TODO
-
         }
 
         FtsSystem.getChatLogger().info(u.getPlayer().getName() + " [" + channel.prefix() + "] " + msg);
@@ -189,7 +185,7 @@ public class ReichChatManager extends ChatManager {
         String f = c.format();
         String faction = "";
 
-        Ausweis ausweis = plugin.getEngine().getAusweis(u.getPlayer());
+        Ausweis ausweis = EngineHook.getEngine().getAusweis(u.getPlayer());
         Gender gender;
         if (ausweis == null)
             gender = Gender.MALE;

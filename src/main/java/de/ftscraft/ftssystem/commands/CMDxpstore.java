@@ -12,10 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CMDxpstore implements CommandExecutor {
 
-    private final FtsSystem plugin;
-
     public CMDxpstore(FtsSystem plugin) {
-        this.plugin = plugin;
         plugin.getCommand("xpstore").setExecutor(this);
     }
 

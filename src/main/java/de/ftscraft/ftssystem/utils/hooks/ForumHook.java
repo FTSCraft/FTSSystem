@@ -1,6 +1,5 @@
-package de.ftscraft.ftssystem.utils.ForumHook;
+package de.ftscraft.ftssystem.utils.hooks;
 
-import de.ftscraft.ftssystem.commands.CMDcheckcv;
 import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.utils.PremiumManager;
 import kong.unirest.HttpResponse;
@@ -32,7 +31,6 @@ public class ForumHook {
 
         PremiumManager premiumManager = plugin.getPremiumManager();
         ArrayList<String> usersInGroup = new ArrayList<>(Arrays.asList(getForumPremiumGroupMembers()));
-        String usersToRemove = "";
 
         StringBuilder usersToAdd = new StringBuilder();
         ArrayList<String> premiumUsers = new ArrayList<>();
@@ -62,7 +60,7 @@ public class ForumHook {
 
     public void deleteUsersFromPremiumGroup(String usernames) throws UnirestException {
 
-        HttpResponse<JsonNode> jsonDeleteResponse = Unirest.delete("https://forum.ftscraft.de/groups/{X}/members.json".replace("{X}", String.valueOf(premiumGroupId)))
+        Unirest.delete("https://forum.ftscraft.de/groups/{X}/members.json".replace("{X}", String.valueOf(premiumGroupId)))
                 .header("accept", "application/json")
                 .header("Api-Username", apiUser)
                 .header("Api-Key", apiKey)
@@ -90,9 +88,7 @@ public class ForumHook {
 
     public void addUserToPremiumGroup(String username) throws UnirestException {
 
-        String jsonRequest = "{\"usernames\": \"" + username + "\"}";
-
-        HttpResponse<JsonNode> jsonPutResponse = Unirest.put("https://forum.ftscraft.de/groups/{X}/members.json".replace("{X}", String.valueOf(premiumGroupId)))
+        Unirest.put("https://forum.ftscraft.de/groups/{X}/members.json".replace("{X}", String.valueOf(premiumGroupId)))
                 .header("accept", "application/json")
                 .header("Api-Username", apiUser)
                 .header("Api-Key", apiKey)
@@ -101,7 +97,7 @@ public class ForumHook {
 
     }
 
-    public CMDcheckcv.Response isAcceptedCV(String name, String url) throws UnirestException {
+    public CheckCVResponse isAcceptedCV(String name, String url) throws UnirestException {
 
         HttpResponse<JsonNode> jsonGetResponse = Unirest.get(url + ".json")
                 .header("accept", "application/json")
@@ -109,7 +105,7 @@ public class ForumHook {
                 .header("Api-Key", apiKey)
                 .asJson();
         if (jsonGetResponse.getStatus() >= 400) {
-            return CMDcheckcv.Response.WRONG_URL;
+            return CheckCVResponse.WRONG_URL;
         }
 
         JSONObject object = jsonGetResponse.getBody().getObject();
@@ -119,18 +115,18 @@ public class ForumHook {
         String postedBy = createdBy.getString("username");
 
         if (tags == null || tags.isEmpty()) {
-            return CMDcheckcv.Response.NOT_ACCEPTED;
+            return CheckCVResponse.NOT_ACCEPTED;
         }
 
         if (!tags.getString(0).equalsIgnoreCase("angenommen")) {
-            return CMDcheckcv.Response.NOT_ACCEPTED;
+            return CheckCVResponse.NOT_ACCEPTED;
         }
 
         if (!name.equalsIgnoreCase(postedBy)) {
-            return CMDcheckcv.Response.NOT_FROM_PLAYER;
+            return CheckCVResponse.NOT_FROM_PLAYER;
         }
 
-        return CMDcheckcv.Response.IS_ACCEPTED;
+        return CheckCVResponse.IS_ACCEPTED;
     }
 
     public void setApiKey(String apiKey) {
@@ -143,5 +139,9 @@ public class ForumHook {
 
     public void setPremiumGroupId(int premiumGroupId) {
         this.premiumGroupId = premiumGroupId;
+    }
+
+    public enum CheckCVResponse {
+        WRONG_URL, NOT_FROM_PLAYER, NOT_ACCEPTED, IS_ACCEPTED
     }
 }

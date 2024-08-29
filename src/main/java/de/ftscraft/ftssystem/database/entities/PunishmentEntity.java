@@ -60,15 +60,9 @@ public class PunishmentEntity {
     public Punishment turnIntoPunishment() {
         Punishment punishment;
         PunishmentType punishmentType = PunishmentType.valueOf(type);
-        switch (punishmentType) {
-            case NOTE -> punishment = new Note(reason, UUID.fromString(author), time, UUID.fromString(player), moreInfo, ID, active);
-            case WARN -> punishment = new Warn(reason, UUID.fromString(author), time, UUID.fromString(player), moreInfo, ID, active);
-            case BAN -> punishment = new Ban(reason, UUID.fromString(author), time, UUID.fromString(player), moreInfo, ID, active);
-            case TEMP_BAN -> punishment = new TempBan(reason, UUID.fromString(author), time, until, UUID.fromString(player), moreInfo, ID, active);
-            case TEMP_MUTE -> punishment = new TempMute(reason, UUID.fromString(author), time, until, UUID.fromString(player), moreInfo, ID, active);
-            case TEMP_WARN -> punishment = new TempWarn(reason, UUID.fromString(author), time, until, UUID.fromString(player), moreInfo, ID, active);
-            default -> throw new IllegalArgumentException();
-        }
+        if (!type.contains("TEMP"))
+            punishment = new Punishment(punishmentType, reason, UUID.fromString(author), time, UUID.fromString(player), moreInfo, ID, active);
+        else punishment = new TemporaryPunishment(punishmentType, reason, UUID.fromString(author), time, until, UUID.fromString(player), moreInfo, ID, active);
         return punishment;
     }
 

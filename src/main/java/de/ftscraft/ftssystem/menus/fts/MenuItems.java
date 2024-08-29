@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 public class MenuItems {
 
     private ItemStack messageSoundOn, messageSoundOff;
-    private ItemStack doNotDisturbOn, doNotDisturbOff, doNotDisturbOnRP;
     private ItemStack scoreboardOn, scoreboardOff;
     private ItemStack oocChannelOff, oocChannelOn, oocChannelRP;
     private ItemStack globalChannelOff, globalChannelOn, globalChannelRP;
@@ -36,21 +35,6 @@ public class MenuItems {
         messageSoundOff = new ItemBuilder(Material.PAPER)
                 .name("§5MSG-Sound: " + ChatColor.RED + "Aus")
                 .lore("§7Derzeit bekommst du keinen Sound wenn du eine MSG erhälst", "§7Klicke, um dies zu ändern!", "§1")
-                .build();
-
-        doNotDisturbOff = new ItemBuilder(Material.RED_DYE)
-                .name("§3Nicht-Stören: " + ChatColor.RED + "Immer Aus")
-                .lore("§7Diese Funktion lässt folgendes für dich ausblenden: ", "§7-Umfragen", "§7-Broadcasts", "§7-Marktschreier", "§2")
-                .build();
-
-        doNotDisturbOn = new ItemBuilder(Material.GREEN_DYE)
-                .name("§3Nicht-Stören: " + ChatColor.GREEN + "Immer An")
-                .lore("§7Diese Funktion lässt folgendes für dich ausblenden: ", "§7-Umfragen", "§7-Broadcasts", "§7-Marktschreier", "§2")
-                .build();
-
-        doNotDisturbOnRP = new ItemBuilder(Material.BLUE_DYE)
-                .name("§3Nicht-Stören: " + ChatColor.BLUE + "Nur im RP an")
-                .lore("§7Diese Funktion lässt folgendes für dich ausblenden: ", "§7-Umfragen", "§7-Broadcasts", "§7-Marktschreier", "§2")
                 .build();
 
         scoreboardOn = new ItemBuilder(Material.OAK_SIGN)
@@ -138,18 +122,6 @@ public class MenuItems {
 
     public ItemStack getMessageSoundOn() {
         return messageSoundOn;
-    }
-
-    public ItemStack getDoNotDisturbOn() {
-        return doNotDisturbOn;
-    }
-
-    public ItemStack getDoNotDisturbOff() {
-        return doNotDisturbOff;
-    }
-
-    public ItemStack getDoNotDisturbOnRP() {
-        return doNotDisturbOnRP;
     }
 
     public ItemStack getScoreboardOn() {

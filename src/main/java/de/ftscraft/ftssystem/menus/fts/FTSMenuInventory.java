@@ -7,7 +7,6 @@ package de.ftscraft.ftssystem.menus.fts;
 
 import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.main.User;
-import de.ftscraft.ftssystem.menus.FTSGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -20,7 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 
-public class FTSMenuInventory implements FTSGUI {
+public class FTSMenuInventory {
 
     private final Player player;
     private final User user;
@@ -111,7 +110,6 @@ public class FTSMenuInventory implements FTSGUI {
         load();
     }
 
-    @Override
     public Inventory getInventory() {
         return init();
     }

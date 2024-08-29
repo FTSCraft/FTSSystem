@@ -4,7 +4,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class Messages {
 
-    public static final NamedTextColor TEXT_COLOR = NamedTextColor.GRAY;
     public static final NamedTextColor HIGHLIGHT_COLOR = NamedTextColor.RED;
 
     public static final String
@@ -15,14 +14,12 @@ public class Messages {
             NO_ACTIVE_CHANNEL = PREFIX + "Du hast keinen aktiven Channel ausgewählt. Mache dies mit /channel aktiv <Name>",
             NOW_ACTIVE_CHANNEL = PREFIX + "%s ist nun dein aktiver Channel!",
             CHOOSE_CHANNEL = PREFIX + "Bitte wähle einen Channel. Du kannst die Channel mit §c/channel list §7sehen!",
-            LEFT_CHANNEL = PREFIX + "Du hast den Channel %s verlassen :(",
             UMFRAGE_CREATED = PREFIX + "Die Umfrage mit der Frage §c%s§7wurde erstellt!",
             NO_UMFRAGE_FOUND = PREFIX + "Du hast keine Umfrage mit /umfrage create FRAGE erstellt!",
             UMFRAGE_ALREADY_STARTED = PREFIX + "Die Umfrage wurde schon gestartet!",
             UMFRAGE_ADDED_OPTION = PREFIX + "Die Option §c%s§7wurde hinzugefügt!",
             UMFRAGE_NOT_STARTED = PREFIX + "Die Umfrage wurde noch gar nicht gestartet",
             UMFRAGE_STATED = PREFIX + "Die Umfrage wurde gestartet!",
-            UMFRAGE_ENDED = PREFIX + "Die Umfrage wurde beendet!",
             UMFRAGE_ALREADY_CONFIG = PREFIX + "Es wird derzeit eine Umfrage erstellt / ist am laufen",
             PLAYER_NOT_FOUND = PREFIX + "Der Spieler wurde nicht gefunden!",
             WRONG_USAGE = PREFIX + "Bitte nutze den Befehl so: " + HIGHLIGHT_COLOR + "%s",

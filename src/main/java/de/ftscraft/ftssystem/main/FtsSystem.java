@@ -1,9 +1,8 @@
 package de.ftscraft.ftssystem.main;
 
-import com.earth2me.essentials.Essentials;
-import de.ftscraft.ftsengine.main.Engine;
 import de.ftscraft.ftssystem.channel.chatmanager.ChatManager;
-import de.ftscraft.ftssystem.channel.chatmanager.ReichChatManager;
+import de.ftscraft.ftssystem.channel.chatmanager.DefaultChatManager;
+import de.ftscraft.ftssystem.channel.chatmanager.TownyChatManager;
 import de.ftscraft.ftssystem.commands.*;
 import de.ftscraft.ftssystem.configs.ConfigManager;
 import de.ftscraft.ftssystem.configs.ConfigVal;
@@ -14,10 +13,9 @@ import de.ftscraft.ftssystem.poll.Umfrage;
 import de.ftscraft.ftssystem.punishment.PunishmentManager;
 import de.ftscraft.ftssystem.scoreboard.FTSScoreboardManager;
 import de.ftscraft.ftssystem.utils.FileManager;
-import de.ftscraft.ftssystem.utils.ForumHook.ForumHook;
+import de.ftscraft.ftssystem.utils.hooks.*;
 import de.ftscraft.ftssystem.utils.PremiumManager;
 import de.ftscraft.ftssystem.utils.Runner;
-import de.ftscraft.ftssystem.utils.discordhook.DiscordHook;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -28,6 +26,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.annotation.Nullable;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,13 +38,12 @@ public class FtsSystem extends JavaPlugin {
     private Umfrage umfrage = null;
 
     public static final String PREFIX = "§7[§cFTS-System§7] ";
+
     private Economy econ;
-    private Essentials essentialsPlugin;
     private ConfigManager configManager;
     private FileManager fileManager;
-    private FTSScoreboardManager scoreboardManager;
+    private FTSScoreboardManager scoreboardManager = null;
     private MenuItems menuItems;
-    private Engine engine;
     private PunishmentManager punishmentManager;
     private boolean wartung;
     private ChatManager chatManager;
@@ -60,20 +58,31 @@ public class FtsSystem extends JavaPlugin {
     public void onEnable() {
         pluginLogger = getLogger();
         chatLogger = Logger.getLogger("Chat");
-        pluginLogger.info("Starting Plugin...");
         hook();
 
         init();
         postInit();
-        pluginLogger.info("Plugin started!");
     }
 
 
     private void hook() {
         setupEconomy();
-        engine = (Engine) getServer().getPluginManager().getPlugin("FTSEngine");
-        if (getServer().getPluginManager().isPluginEnabled("Essentials"))
-            essentialsPlugin = (Essentials) getServer().getPluginManager().getPlugin("Essentials");
+
+        if (HookManager.ESSENTIALS_ENABLED)
+            EssentialsHook.hook();
+        else
+            getLogger().warning("Essentials is not enabled! Some functions may be disabled");
+
+        if (HookManager.FTS_ENGINE_ENABLED)
+            EngineHook.hook();
+        else
+            getLogger().warning("FTSEngine is not enabled! Some functions may be disabled");
+
+        if (HookManager.LUCK_PERMS_ENABLED)
+            LuckPermsHook.hook();
+        else
+            getLogger().warning("LuckPerms is not enabled! Some functions may be disabled");
+
     }
 
     @Override
@@ -93,17 +102,34 @@ public class FtsSystem extends JavaPlugin {
         user = new HashMap<>();
         configManager = new ConfigManager(this);
         fileManager = new FileManager(this);
-        chatManager = new ReichChatManager(this);
+
+        if (HookManager.FTS_ENGINE_ENABLED && HookManager.TOWNY_ENABLED)
+            chatManager = new TownyChatManager(this);
+        else chatManager = new DefaultChatManager(this);
+
         punishmentManager = new PunishmentManager(this);
-        scoreboardManager = new FTSScoreboardManager(this);
+        if (HookManager.FTS_ENGINE_ENABLED)
+            scoreboardManager = new FTSScoreboardManager(this);
         menuItems = new MenuItems();
         premiumManager = new PremiumManager(this);
         forumHook = new ForumHook(this);
+
         //TODO
         discordHook = new DiscordHook("oma");
+
         new CMDakte(this);
         new CMDbroadcast(this);
-        new CMDcheckcv(this);
+
+        if (HookManager.FTS_ENGINE_ENABLED)
+            new CMDcheckcv(this);
+        else new CommandNotAvailable(this, "checkcv", "FTSEngine not enabled");
+
+        if (HookManager.ESSENTIALS_ENABLED) {
+            new CMDtravel(this);
+            new EssentialsListener(this);
+        } else {
+            new CommandNotAvailable(this, "travel", "Essentials not enabled");
+        }
         new CMDdurchsage(this);
         new CMDfts(this);
         new CMDftssystem(this);
@@ -112,7 +138,6 @@ public class FtsSystem extends JavaPlugin {
         new CMDpu(this);
         new CMDradius(this);
         new CMDsetvotehome(this);
-        new CMDtravel(this);
         new CMDtutorialbuch(this);
         new CMDumfrage(this);
         new CMDvoteban(this);
@@ -126,7 +151,6 @@ public class FtsSystem extends JavaPlugin {
         new CommandListener(this);
         new ChatListener(this);
         new JoinListener(this);
-        new EssentialsListener(this);
         new QuitListener(this);
         new LoginListener(this);
         new InvClickListener(this);
@@ -211,6 +235,10 @@ public class FtsSystem extends JavaPlugin {
         this.umfrage = umfrage;
     }
 
+    /**
+     * @return Scoreboard Manager if FTSEngine is on, otherwise null
+     */
+    @Nullable
     public FTSScoreboardManager getScoreboardManager() {
         return scoreboardManager;
     }
@@ -238,10 +266,6 @@ public class FtsSystem extends JavaPlugin {
         return fileManager;
     }
 
-    public Engine getEngine() {
-        return engine;
-    }
-
     public MenuItems getMenuItems() {
         return menuItems;
     }
@@ -264,10 +288,6 @@ public class FtsSystem extends JavaPlugin {
 
     public static Logger getChatLogger() {
         return chatLogger;
-    }
-
-    public Essentials getEssentialsPlugin() {
-        return essentialsPlugin;
     }
 
     public DiscordHook getDiscordHook() {

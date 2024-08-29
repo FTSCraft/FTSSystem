@@ -25,7 +25,8 @@ public class SneakListener implements Listener {
 
         Player p = event.getPlayer();
 
-        plugin.getScoreboardManager().toggleSneakingMode(p);
+        if (plugin.getScoreboardManager() != null)
+            plugin.getScoreboardManager().toggleSneakingMode(p);
 
     }
 

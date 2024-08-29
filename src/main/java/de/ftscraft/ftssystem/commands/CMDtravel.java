@@ -1,10 +1,9 @@
 package de.ftscraft.ftssystem.commands;
 
-import com.earth2me.essentials.commands.WarpNotFoundException;
 import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.travelsystem.TravelType;
-import net.ess3.api.InvalidWorldException;
+import de.ftscraft.ftssystem.utils.hooks.EssentialsHook;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -54,10 +53,9 @@ public class CMDtravel implements CommandExecutor {
             cs.sendMessage("Spieler " + args[0] + " nicht gefunden!");
             return true;
         }
-        Location loc;
-        try {
-            loc = plugin.getEssentialsPlugin().getWarps().getWarp(args[1]);
-        } catch (WarpNotFoundException | InvalidWorldException e) {
+
+        Location loc = EssentialsHook.getWarpLocation(args[1]);
+        if (loc == null) {
             FtsSystem.getPluginLogger().warning("Tried to warp to " + args[1] + " via Essentials, didn't work");
             return true;
         }

@@ -6,6 +6,7 @@
 package de.ftscraft.ftssystem.utils;
 
 import de.ftscraft.ftssystem.main.FtsSystem;
+import de.ftscraft.ftssystem.punishment.TimeUnits;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;

@@ -10,7 +10,7 @@ import de.ftscraft.ftsutils.uuidfetcher.UUIDFetcher;
 import java.util.Calendar;
 import java.util.UUID;
 
-public abstract class Punishment {
+public class Punishment {
 
     protected final String reason;
     protected final UUID author;
@@ -19,8 +19,9 @@ public abstract class Punishment {
     protected String moreInfo;
     protected boolean active;
     protected final int ID;
+    protected final PunishmentType type;
 
-    public Punishment(String reason, UUID author, long time, UUID player, String moreInfo, int id, boolean active) {
+    public Punishment(PunishmentType type, String reason, UUID author, long time, UUID player, String moreInfo, int id, boolean active) {
         this.reason = reason;
         this.author = author;
         this.time = time;
@@ -28,6 +29,7 @@ public abstract class Punishment {
         this.moreInfo = moreInfo;
         this.active = active;
         this.ID = id;
+        this.type = type;
     }
 
     public UUID getPlayer() {
@@ -66,7 +68,9 @@ public abstract class Punishment {
         this.moreInfo = moreInfo;
     }
 
-    public abstract PunishmentType getType();
+    public PunishmentType getType() {
+        return type;
+    }
 
     public String createdOn() {
 

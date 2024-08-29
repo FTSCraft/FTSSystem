@@ -1,4 +1,4 @@
-package de.ftscraft.ftssystem.utils.discordhook;
+package de.ftscraft.ftssystem.utils.hooks;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -16,7 +16,7 @@ public class DiscordHook {
     }
 
     public void sendNewTown(String town) {
-        HttpResponse<JsonNode> response = Unirest.post(url + "townchange")
+        Unirest.post(url + "townchange")
                 .header("accept", "application/json")
                 .field("what", "creation")
                 .field("town", town)
@@ -25,7 +25,7 @@ public class DiscordHook {
     }
 
     public void sendDeleteTown(String town) {
-        HttpResponse<JsonNode> response = Unirest.post(url + "townchange")
+        Unirest.post(url + "townchange")
                 .header("accept", "application/json")
                 .field("what", "deletion")
                 .field("town", town)
@@ -34,7 +34,7 @@ public class DiscordHook {
     }
 
     public void sendJoinedTown(String town, UUID user) {
-        HttpResponse<JsonNode> response = Unirest.post(url + "townchange")
+        Unirest.post(url + "townchange")
                 .header("accept", "application/json")
                 .field("what", "town_join")
                 .field("town", town)
@@ -54,16 +54,15 @@ public class DiscordHook {
     }
 
     public void sendVerification(UUID user, String code, String town) {
-        HttpResponse<JsonNode> response;
         if (town == null) {
-            response = Unirest.post(url + "verification")
+            Unirest.post(url + "verification")
                     .header("accept", "application/json")
                     .field("uuid", user.toString())
                     .field("code", code)
                     .field("password", apiKey)
                     .asJson();
         } else {
-            response = Unirest.post(url + "verification")
+            Unirest.post(url + "verification")
                     .header("accept", "application/json")
                     .field("uuid", user.toString())
                     .field("code", code)

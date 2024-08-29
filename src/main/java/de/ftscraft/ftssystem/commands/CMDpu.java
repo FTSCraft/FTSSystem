@@ -10,7 +10,6 @@ import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.punishment.Punishment;
 import de.ftscraft.ftssystem.punishment.PunishmentInventory;
 import de.ftscraft.ftssystem.punishment.TemporaryPunishment;
-import de.ftscraft.ftssystem.utils.FTSCommand;
 import de.ftscraft.ftssystem.utils.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -19,13 +18,14 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static de.ftscraft.ftssystem.utils.Utils.msg;
 
-public class CMDpu implements FTSCommand {
+public class CMDpu implements CommandExecutor {
 
     private final FtsSystem plugin;
 

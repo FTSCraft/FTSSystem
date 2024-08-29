@@ -10,13 +10,11 @@ import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.main.User;
 import de.ftscraft.ftssystem.poll.Umfrage;
 import de.ftscraft.ftssystem.utils.PremiumManager;
+import de.ftscraft.ftssystem.utils.hooks.HookManager;
+import de.ftscraft.ftssystem.utils.hooks.LuckPermsHook;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.node.Node;
-import net.luckperms.api.node.types.InheritanceNode;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,12 +36,14 @@ public class JoinListener implements Listener {
 
         Player p = event.getPlayer();
 
-        plugin.getScoreboardManager().setPlayerPrefix(p);
+        if (plugin.getScoreboardManager() != null)
+            plugin.getScoreboardManager().setPlayerPrefix(p);
 
         event.joinMessage(generateJoinMessage(p));
 
         User u = new User(plugin, event.getPlayer());
 
+        //If a poll is active and user does not have 'Do Not Disturb' enabled, show it to them
         if (!u.getDisturbStatus().equals(User.ChannelStatusSwitch.ON)) {
 
             Umfrage umfrage = plugin.getUmfrage();
@@ -57,6 +57,7 @@ public class JoinListener implements Listener {
             }
         }
 
+        //If user has Noob Protection and is bürger, remove it
         if (u.hasNoobProtection()) {
             if (p.hasPermission("ftssystem.bürger")) {
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -66,19 +67,15 @@ public class JoinListener implements Listener {
             }
         }
 
-        PremiumManager premiumManager = plugin.getPremiumManager();
-        if (p.hasPermission("group.premium")) {
-            LuckPerms luckPerms = LuckPermsProvider.get();
-            for (Node node : luckPerms.getUserManager().getUser(p.getUniqueId()).getNodes()) {
-                if (node instanceof InheritanceNode inheritanceNode) {
-                    if (inheritanceNode.getGroupName().equalsIgnoreCase("Premium")) {
-                        if (inheritanceNode.getExpiry() != null)
-                            premiumManager.addPremiumPlayer(p.getUniqueId(), inheritanceNode.getExpiry().getEpochSecond());
-                    }
-                }
+
+        //If Luckperms is available, look up if player has premium and if, for how long
+        if (HookManager.LUCK_PERMS_ENABLED) {
+            PremiumManager premiumManager = plugin.getPremiumManager();
+            if (p.hasPermission("group.premium")) {
+                premiumManager.addPremiumPlayer(p.getUniqueId(), LuckPermsHook.getParentDuration(p.getUniqueId(), "Premium"));
+            } else {
+                premiumManager.removePremiumPlayer(p.getUniqueId());
             }
-        } else {
-            premiumManager.removePremiumPlayer(p.getUniqueId());
         }
 
     }
