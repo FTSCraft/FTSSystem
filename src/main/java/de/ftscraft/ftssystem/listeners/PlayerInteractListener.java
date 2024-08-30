@@ -22,7 +22,7 @@ public class PlayerInteractListener implements Listener {
 
         if (event.getItem() != null)
             if (event.getItem().getType() == Material.BONE_MEAL)
-                if(!ItemReader.getSign(event.getItem()).equals("FTS_FERTILIZER"))
+                if(!ItemReader.getSign(event.getItem()).equals("FERTILIZER"))
                     event.setCancelled(true);
 
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
