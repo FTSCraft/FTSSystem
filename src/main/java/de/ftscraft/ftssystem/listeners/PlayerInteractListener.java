@@ -20,10 +20,6 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
 
-        if (event.getItem() != null)
-            if (event.getItem().getType() == Material.BONE_MEAL)
-                event.setCancelled(true);
-
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
         ItemStack itemInHand = event.getItem();
