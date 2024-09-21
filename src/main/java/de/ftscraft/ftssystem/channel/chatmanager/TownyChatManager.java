@@ -199,7 +199,7 @@ public class TownyChatManager extends ChatManager {
         String channelName = c.name();
         if (api.getResident(u.getPlayer()).hasTown()) {
             try {
-                faction = api.getResident(u.getPlayer()).getTown().getName();
+                faction = api.getResident(u.getPlayer()).getTown().getName().replace("_", " ");
             } catch (NotRegisteredException e) {
                 throw new RuntimeException(e);
             }
