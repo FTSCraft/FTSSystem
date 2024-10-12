@@ -103,8 +103,10 @@ public class MenuItems {
                 .name("§3Global-Channel: " + ChatColor.BLUE + "Nur im RP aus")
                 .build();
 
+        String[] s = {""};
+
         roleplayModeOn = new ItemBuilder(Material.FEATHER)
-                .lore("§7Schalte den Rollenspielmodus um", "§8")
+                .lore("§7Schalte den Rollenspielmodus um", "§7Der RP-Modus schaltet nur gewisse Funktionen ein oder aus. Er symbolisiert §cnicht §7ob du gerade im RP bist, weil du §cimmer im RP bist§7.", "§8")
                 .shiny()
                 .addFlags(ItemFlag.HIDE_ENCHANTS)
                 .name("§3RP-Modus: " + ChatColor.GREEN + "Ein")
