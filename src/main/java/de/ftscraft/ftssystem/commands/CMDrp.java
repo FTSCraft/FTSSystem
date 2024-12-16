@@ -27,6 +27,6 @@ public class CMDrp implements CommandExecutor {
 
         plugin.getScoreboardManager().switchToRoleplayMode(player);
 
-        return false;
+        return true;
     }
 }
