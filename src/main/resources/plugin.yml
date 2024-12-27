@@ -74,3 +74,4 @@ commands:
   rp:
     usage: /rp
     description: Toggelt den RP-Modus
+  deckname:

@@ -26,6 +26,9 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 
 public class TownyChatManager extends ChatManager {
@@ -37,51 +40,45 @@ public class TownyChatManager extends ChatManager {
         api = TownyAPI.getInstance();
     }
 
-    public void chat(User u, String msg) {
-        Channel a = u.getActiveChannel();
-        if (a == null) {
-            u.getPlayer().sendMessage(Messages.CHOOSE_CHANNEL);
+    public void chat(User user, String message) {
+        Channel activeChannel = user.getActiveChannel();
+        if (activeChannel == null) {
+            user.getPlayer().sendMessage(Messages.CHOOSE_CHANNEL);
             return;
         }
-        if (u.getActiveChannel() == null) {
-            u.getPlayer().sendMessage(Messages.NO_ACTIVE_CHANNEL);
-        }
-
-        chat(u, msg, a);
-
+        chat(user, message, activeChannel);
     }
 
-    private TextComponent buildComponent(String text, String user) {
-
-        TextComponent component = Component.text("");
+    private TextComponent buildComponent(String text, String username) {
+        TextComponent.Builder componentBuilder = Component.text();
         String code = "";
-        for (String s : text.split(" ")) {
-            if (s.startsWith("§")) {
-                code = s.substring(1, 2);
+
+        for (String word : text.split(" ")) {
+            if (word.startsWith("§")) {
+                code = word.substring(1, 2);
             }
-            if (s.length() > 4 && (s.startsWith("https://") || s.startsWith("http://") || s.substring(2).startsWith("https://") || s.substring(2).startsWith("http://"))) {
-                if (s.substring(2).startsWith("https://") || s.substring(2).startsWith("http://")) {
-                    s = s.substring(2);
-                }
-                TextComponent textComponent = Component.text("§b[LINK]§r")
-                        .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, s))
-                        .hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, Component.text(Utils.getTitleFromWebsite(s) + "\n" + "§7" + s)));
-                component = component.append(textComponent).append(Component.text(" "));
-            } else if (s.startsWith("§r§a")) {
-                TextComponent textComponent = Component.text(s.replace("_", " "))
-                        .hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, Component.text(user)));
-                component = component.append(textComponent).append(Component.text(" "));
+            if (word.matches("^(https?://|§[0-9a-fk-or]{0,1}https?://).*")) {
+                String url = word.replaceFirst("§[0-9a-fk-or]*", "");
+                componentBuilder.append(
+                        Component.text("§b[LINK]§r")
+                                .clickEvent(ClickEvent.openUrl(url))
+                                .hoverEvent(HoverEvent.showText(Component.text(Utils.getTitleFromWebsite(url) + "\n§7" + url)))
+                ).append(Component.space());
+            } else if (word.startsWith("§r§a")) {
+                componentBuilder.append(
+                        Component.text(word.replace("_", " "))
+                                .hoverEvent(HoverEvent.showText(Component.text(username)))
+                ).append(Component.space());
             } else {
-                if (!code.isEmpty())
-                    component = component.append(Component.text("§" + code + s + " "));
-                else component = component.append(Component.text(s + " "));
+                componentBuilder.append(Component.text(code.isEmpty() ? word + " " : "§" + code + word + " "));
             }
 
-            if (s.contains("§"))
-                code = String.valueOf(s.charAt(s.lastIndexOf("§") + 1));
-
+            if (word.contains("§")) {
+                code = word.substring(word.lastIndexOf("§") + 1, word.lastIndexOf("§") + 2);
+            }
         }
-        return component;
+
+        return componentBuilder.build();
     }
 
     public void chat(User u, String msg, Channel channel) {
@@ -181,54 +178,68 @@ public class TownyChatManager extends ChatManager {
 
     }
 
-    private String format(User u, Channel c, String msg) {
-        String f = c.format();
+    private String format(User user, Channel channel, String message) {
+        String formatted = channel.format();
+
+        Ausweis ausweis = EngineHook.getEngine().getAusweis(user.getPlayer());
+        Gender gender = (ausweis != null && ausweis.getGender() != null) ? ausweis.getGender() : Gender.MALE;
+
+        String prefix = TeamPrefixs.getPrefix(user.getPlayer(), gender);
+        String name = user.getPlayer().getName();
+
+
+        formatted = formatted.replace("%fa", getFactionName(user))
+                .replace("%pr", prefix)
+                .replace("%ch", channel.name())
+                .replace("%cp", channel.prefix())
+                .replace("%na", getUserDisplayName(user, channel))
+                .replace("&", "§");
+
+        formatted = formatted
+                .replace("%msg",
+                        user.getPlayer().hasPermission("ftssystem.chat.color")
+                                ? ChatColor.translateAlternateColorCodes('&', message) : message)
+                .replace("((", "§7((")
+                .replace("))", "§7))§r");
+
+        return formatted;
+    }
+
+    /**
+     * returns faction name of faction from user
+     *
+     * @param user user to get faction name from
+     * @return Empty string when no faction
+     */
+    private String getFactionName(@NotNull User user) {
         String faction = "";
-
-        Ausweis ausweis = EngineHook.getEngine().getAusweis(u.getPlayer());
-        Gender gender;
-        if (ausweis == null)
-            gender = Gender.MALE;
-        else
-            gender = ausweis.getGender();
-        if (gender == null)
-            gender = Gender.MALE;
-
-        String prefix = TeamPrefixs.getPrefix(u.getPlayer(), gender);
-        String name = u.getPlayer().getName();
-        String channelName = c.name();
-        if (api.getResident(u.getPlayer()).hasTown()) {
+        if (api.getResident(user.getPlayer()).hasTown()) {
             try {
-                faction = api.getResident(u.getPlayer()).getTown().getName().replace("_", " ");
+                faction = api.getResident(user.getPlayer()).getTown().getName().replace("_", " ");
             } catch (NotRegisteredException e) {
                 throw new RuntimeException(e);
             }
         }
+        return faction;
+    }
 
-        f = f.replace("%fa", faction);
-        f = f.replace("%pr", prefix);
-        f = f.replace("%ch", channelName);
-        f = f.replace("%cp", c.prefix());
-        f = f.replace("&", "§");
-        //Wenn der Spieler im RP Modus ist, wird der eigentliche Name mit dem Namen ausgetauscht der im Ausweis angegeben ist, wenn ein Ausweis vorhanden ist
-        if (plugin.getScoreboardManager().isInRoleplayMode(u.getPlayer())) {
-            //Wenn der Ausweis nicht existiert, die Variable mit dem normalen Spielernamen ergenzen
-            if (ausweis == null || c.name().equalsIgnoreCase("Global") || c.name().equalsIgnoreCase("OOC")) {
-                f = f.replace("%na", name);
+    private String getUserDisplayName(User user, Channel channel) {
+        Ausweis ausweis = EngineHook.getEngine().getAusweis(user.getPlayer());
+        String name = user.getPlayer().getName();
+        if (plugin.getScoreboardManager().isInRoleplayMode(user.getPlayer())
+                && ausweis != null
+                && !channel.name().equalsIgnoreCase("Global")
+                && !channel.name().equalsIgnoreCase("OOC")) {
+            boolean deckname = user.isUsingDeckname();
+            if (!deckname) {
+                name = "§a" + ausweis.getFirstName()
+                        .replace(" ", "_") + "_" +
+                        ausweis.getLastName().replace(" ", "_");
             } else {
-                f = f.replace("%na", "§a" + ausweis.getFirstName().replace(" ", "_") + "_" + ausweis.getLastName().replace(" ", "_") + "§r");
-                if (u.getPlayer().hasPermission("ftssystem.chat.color")) {
-                    f = f.replace("&", "§");
-                }
+                name = "§a" + ausweis.getSpitzname().replace(" ", "_");
             }
-        } else
-            f = f.replace("%na", name);
-
-        f = f.replace("%msg", (u.getPlayer().hasPermission("ftssystem.chat.color") ? ChatColor.translateAlternateColorCodes('&', msg) : msg));
-        f = f.replace("((", "§7((");
-        f = f.replace("))", "§7))§r");
-
-        return f;
+        }
+        return name;
     }
 
 
