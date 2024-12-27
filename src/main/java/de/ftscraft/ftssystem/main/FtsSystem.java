@@ -145,6 +145,8 @@ public class FtsSystem extends JavaPlugin {
         new CMDwartung(this);
         new CMDrepair(this);
         new CMDxpstore(this);
+        new CMDrp(this);
+        new DecknameCMD(this);
 
         new PortalListener(this);
         new DeathListener(this);
