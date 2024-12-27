@@ -72,8 +72,7 @@ public class CMDpremium implements CommandExecutor {
                 Messages.PREFIX + "Hilfestellung für /premium: \n" +
                 "§7/premium automessage §e- §7Schalte die automatischen Servernachrichten an/aus!\n" +
                 "§7/item §e- §7Benenne deine Items um!\n" +
-                "§7/hat §e- §7Zieh dir den Block, den du derzeit in der Hand hast auf den Kopf!\n" +
-                "§7/es §e- §7Verändere Schilder ohne sie komplett neu hinbauen zu müssen!";
+                "§7/hat §e- §7Zieh dir den Block, den du derzeit in der Hand hast auf den Kopf!\n";
 
     }
 
