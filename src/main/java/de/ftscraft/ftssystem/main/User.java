@@ -26,6 +26,7 @@ public class User {
     private boolean approved = false;
     private boolean noobProtection = true;
     private boolean msgSound = true;
+    private boolean useDeckname = false;
     private ChannelStatusSwitch disturbStatus = ChannelStatusSwitch.OFF;
     private ChannelStatusSwitch globalChannelStatus = ChannelStatusSwitch.ON;
     private ChannelStatusSwitch factionChannelStatus = ChannelStatusSwitch.ON;
@@ -234,6 +235,14 @@ public class User {
         }
         menu.refresh();
         player.openInventory(menu.getInventory());
+    }
+
+    public boolean isUsingDeckname() {
+        return useDeckname;
+    }
+
+    public void setUseDeckname(boolean useDeckname) {
+        this.useDeckname = useDeckname;
     }
 
     public enum ChannelStatusSwitch {

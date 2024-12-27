@@ -71,3 +71,7 @@ commands:
   xpstore:
     usage: /xpstore [Spieler]
     permision: ftssystem.console
+  rp:
+    usage: /rp
+    description: Toggelt den RP-Modus
+  deckname:
