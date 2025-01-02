@@ -26,8 +26,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -57,7 +55,7 @@ public class TownyChatManager extends ChatManager {
             if (word.startsWith("§")) {
                 code = word.substring(1, 2);
             }
-            if (word.matches("^(https?://|§[0-9a-fk-or]{0,1}https?://).*")) {
+            if (word.matches("^(https?://|§[0-9a-fk-or]?https?://).*")) {
                 String url = word.replaceFirst("§[0-9a-fk-or]*", "");
                 componentBuilder.append(
                         Component.text("§b[LINK]§r")
@@ -223,24 +221,11 @@ public class TownyChatManager extends ChatManager {
         return faction;
     }
 
-    private String getUserDisplayName(User user, Channel channel) {
-        Ausweis ausweis = EngineHook.getEngine().getAusweis(user.getPlayer());
-        String name = user.getPlayer().getName();
-        if (plugin.getScoreboardManager().isInRoleplayMode(user.getPlayer())
-                && ausweis != null
-                && !channel.name().equalsIgnoreCase("Global")
-                && !channel.name().equalsIgnoreCase("OOC")) {
-            boolean deckname = user.isUsingDeckname();
-            if (!deckname) {
-                name = "§a" + ausweis.getFirstName()
-                        .replace(" ", "_") + "_" +
-                        ausweis.getLastName().replace(" ", "_");
-            } else {
-                name = "§a" + ausweis.getSpitzname().replace(" ", "_");
-            }
-        }
-        return name;
+    public static String getUserDisplayName(User user, Channel channel) {
+        boolean rp = FtsSystem.Instance().getScoreboardManager().isInRoleplayMode(user.getPlayer());
+        if (rp) {
+            return "§a" + ChatManager.getUserDisplayName(user, channel);
+        } else return ChatManager.getUserDisplayName(user, channel);
     }
-
 
 }

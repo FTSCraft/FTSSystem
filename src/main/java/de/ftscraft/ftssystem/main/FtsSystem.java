@@ -34,6 +34,8 @@ import java.util.logging.Logger;
 
 public class FtsSystem extends JavaPlugin {
 
+    private static FtsSystem instance;
+
     private HashMap<String, User> user;
     private Umfrage umfrage = null;
 
@@ -56,6 +58,9 @@ public class FtsSystem extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        instance = this;
+
         pluginLogger = getLogger();
         chatLogger = Logger.getLogger("Chat");
         hook();
@@ -295,4 +300,9 @@ public class FtsSystem extends JavaPlugin {
     public DiscordHook getDiscordHook() {
         return discordHook;
     }
+
+    public static FtsSystem Instance() {
+        return instance;
+    }
+
 }

@@ -6,6 +6,7 @@
 package de.ftscraft.ftssystem.listeners;
 
 import de.ftscraft.ftsengine.utils.Ausweis;
+import de.ftscraft.ftssystem.channel.chatmanager.ChatManager;
 import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.main.User;
@@ -35,7 +36,122 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onChat(AsyncChatEvent event) {
+
         String msg = PlainTextComponentSerializer.plainText().serialize(event.message());
+
+        handlePunishmentCreation(event, msg);
+        handleMute(event);
+
+        if (event.isCancelled()) {
+            return;
+        }
+
+        User u = plugin.getUser(event.getPlayer());
+
+        if (u == null) {
+            event.getPlayer().sendMessage("§cIrgendwas ist schief gelaufen. Probier mal zu reconnecten!");
+            return;
+        }
+
+        event.setCancelled(true);
+        if (HookManager.FTS_ENGINE_ENABLED) {
+            if (!handleStarMessage(event, msg, u))
+                return;
+        }
+
+        if (msg.startsWith("!")) {
+            plugin.getChatManager().chat(u, msg.replaceFirst("!", ""), plugin.getChatManager().getChannel("Global"));
+            return;
+        }
+
+        plugin.getChatManager().chat(u, msg);
+
+    }
+
+    private boolean handleStarMessage(AsyncChatEvent event, String msg, User u) {
+        if (!msg.startsWith("*")) {
+            return true;
+        }
+
+        if (u.getActiveChannel().range() < 0) {
+            u.getPlayer().sendMessage("§cBitte sei in einem nicht-globalen Channel dafür.");
+            return false;
+        }
+
+        String[] msgs = msg.split(" ");
+        turnPlayerNamesToRoleplayNames(msgs);
+
+        StringBuilder newMsg;
+        Ausweis a = EngineHook.getEngine().getAusweis(event.getPlayer());
+
+        if (a == null) {
+            event.getPlayer().sendPlainMessage("§cBitte erstell dir erst einen Ausweis");
+            return false;
+        }
+
+        msgs[0] = msgs[0].substring(1);
+
+        if (!msg.startsWith("**")) {
+            newMsg = new StringBuilder("§e")
+                    .append(ChatManager.getUserDisplayName(u, u.getActiveChannel()).replace("_", " "))
+                    .append(" ");
+            if (plugin.getScoreboardManager().isInRoleplayMode(u.getPlayer())) {
+                newMsg.append("(")
+                        .append(event.getPlayer().getName())
+                        .append(") ");
+            }
+        } else {
+            msgs[0] = msgs[0].substring(1);
+            newMsg = new StringBuilder("§e");
+        }
+
+        for (String m : msgs) {
+            newMsg.append(m).append(" ");
+        }
+
+        newMsg = new StringBuilder(newMsg.toString().replace("((", "§7(("));
+        newMsg = new StringBuilder(newMsg.toString().replace("))", "§7))§e"));
+
+        newMsg = new StringBuilder(turnEverythingInQuotationsWhite(newMsg.toString()));
+
+        event.setCancelled(true);
+        Player p = u.getPlayer();
+
+        for (User users : plugin.getUser().values()) {
+            Player target = users.getPlayer();
+            if (target.getWorld().equals(p.getWorld()) &&
+                    target.getLocation().distance(p.getLocation()) <= u.getActiveChannel().range()) {
+                target.sendMessage(newMsg.toString());
+            }
+        }
+
+        FtsSystem.getChatLogger().info(event.getPlayer().getName() + " [RP] " + msg);
+
+        return false;
+
+    }
+
+    private void turnPlayerNamesToRoleplayNames(String[] msgs) {
+        for (int i = 0; i < msgs.length; i++) {
+            for (Player a : Bukkit.getOnlinePlayers()) {
+                if (EngineHook.getEngine().hasAusweis(a)) {
+                    if (a.getName().equalsIgnoreCase(msgs[i])) {
+                        msgs[i] = EngineHook.getEngine().getAusweis(a).getFirstName() + " " + EngineHook.getEngine().getAusweis(a).getLastName();
+                    }
+                }
+            }
+        }
+    }
+
+    private void handleMute(AsyncChatEvent event) {
+        if (plugin.getPunishmentManager().isMuted(event.getPlayer()) != null) {
+            TemporaryPunishment mute = (TemporaryPunishment) plugin.getPunishmentManager().isMuted(event.getPlayer());
+            event.getPlayer().sendMessage(Messages.PREFIX + "Du bist noch " + mute.untilAsString() + " lang gemuted aufgrund von: §e" + mute.getReason());
+            event.setCancelled(true);
+        }
+    }
+
+    private void handlePunishmentCreation(AsyncChatEvent event, String msg) {
         if (plugin.getPunishmentManager().getBuilders().get(event.getPlayer()) != null) {
             event.setCancelled(true);
             PunishmentBuilder prog = plugin.getPunishmentManager().getBuilders().get(event.getPlayer());
@@ -100,92 +216,6 @@ public class ChatListener implements Listener {
                 }
             }
         }
-
-        if (plugin.getPunishmentManager().isMuted(event.getPlayer()) != null) {
-            TemporaryPunishment mute = (TemporaryPunishment) plugin.getPunishmentManager().isMuted(event.getPlayer());
-            event.getPlayer().sendMessage(Messages.PREFIX + "Du bist noch " + mute.untilAsString() + " lang gemuted aufgrund von: §e" + mute.getReason());
-            event.setCancelled(true);
-        }
-
-        if (event.isCancelled()) {
-            return;
-        }
-
-        User u = plugin.getUser(event.getPlayer());
-        if (u == null) {
-            event.getPlayer().sendMessage("§cIrgendwas ist schief gelaufen. Probier mal zu reconnecten!");
-            return;
-        }
-        event.setCancelled(true);
-        if (HookManager.ESSENTIALS_ENABLED) {
-            if (msg.startsWith("*")) {
-                if (msg.startsWith(String.valueOf('*'))) {
-
-                    String[] msgs = msg.split(" ");
-
-                    for (int i = 0; i < msgs.length; i++) {
-                        for (Player a : Bukkit.getOnlinePlayers()) {
-                            if (EngineHook.getEngine().hasAusweis(a)) {
-                                if (a.getName().equalsIgnoreCase(msgs[i])) {
-                                    msgs[i] = EngineHook.getEngine().getAusweis(a).getFirstName() + " " + EngineHook.getEngine().getAusweis(a).getLastName();
-                                }
-                            }
-                        }
-                    }
-
-                    StringBuilder newMsg;
-
-                    Ausweis a = EngineHook.getEngine().getAusweis(event.getPlayer());
-
-                    if (a == null) {
-                        event.getPlayer().sendPlainMessage("§cBitte erstell dir erst einen Ausweis");
-                        return;
-                    }
-
-                    msgs[0] = msgs[0].substring(1);
-
-                    if (!msg.startsWith("**")) {
-
-                        newMsg = new StringBuilder("§e" + a.getFirstName() + " " + a.getLastName() + " (" + event.getPlayer().getName() + ") ");
-
-                    } else {
-                        msgs[0] = msgs[0].substring(1);
-                        newMsg = new StringBuilder("§e");
-                    }
-
-                    //msgs[0].replace("*", "");
-
-                    for (String m : msgs) {
-                        newMsg.append(m).append(" ");
-                    }
-
-                    newMsg = new StringBuilder(newMsg.toString().replace("((", "§7(("));
-                    newMsg = new StringBuilder(newMsg.toString().replace("))", "§7))§e"));
-
-                    newMsg = new StringBuilder(turnEverythingInQuotationsWhite(newMsg.toString()));
-
-                    event.setCancelled(true);
-
-                    for (User b : plugin.getUser().values()) {
-                        if (b.getPlayer().getWorld().getName().equalsIgnoreCase(u.getPlayer().getWorld().getName())) {
-                            if (b.getPlayer().getLocation().distance(u.getPlayer().getLocation()) <= u.getActiveChannel().range()) {
-                                b.getPlayer().sendMessage(newMsg.toString());
-                            }
-                        }
-                    }
-
-                    FtsSystem.getChatLogger().info(event.getPlayer().getName() + " [RP] " + msg);
-                }
-                return;
-            }
-        }
-        if (msg.startsWith("!")) {
-            plugin.getChatManager().chat(u, msg.replaceFirst("!", ""), plugin.getChatManager().getChannel("Global"));
-            return;
-        }
-
-        plugin.getChatManager().chat(u, msg);
-
     }
 
     private String turnEverythingInQuotationsWhite(String text) {
