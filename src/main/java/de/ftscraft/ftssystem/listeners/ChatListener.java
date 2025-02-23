@@ -136,7 +136,12 @@ public class ChatListener implements Listener {
             for (Player a : Bukkit.getOnlinePlayers()) {
                 if (EngineHook.getEngine().hasAusweis(a)) {
                     if (a.getName().equalsIgnoreCase(msgs[i])) {
-                        msgs[i] = EngineHook.getEngine().getAusweis(a).getFirstName() + " " + EngineHook.getEngine().getAusweis(a).getLastName();
+                        Ausweis ausweis = EngineHook.getEngine().getAusweis(a);
+                        if (!FtsSystem.Instance().getUser(a).isUsingDeckname()) {
+                            msgs[i] = ausweis.getFirstName() + " " + ausweis.getLastName();
+                        } else {
+                            msgs[i] = ausweis.getSpitzname();
+                        }
                     }
                 }
             }
