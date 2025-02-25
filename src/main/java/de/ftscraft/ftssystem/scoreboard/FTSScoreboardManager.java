@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+
 import static de.ftscraft.ftsengine.utils.Ausweis.Gender;
 
 public class FTSScoreboardManager {

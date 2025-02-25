@@ -6,6 +6,9 @@
 package de.ftscraft.ftssystem.menus.fts;
 
 import de.ftscraft.ftsutils.items.ItemBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
@@ -20,11 +23,24 @@ public class MenuItems {
     private ItemStack factionChannelOff, factionChannelOn, factionChannelRP;
     private ItemStack roleplayModeOn, roleplayModeOff;
 
+    private ItemStack armorStand;
+
+    private ItemStack filler;
+
+    private ItemStack shopMenu;
+
     public MenuItems() {
         init();
     }
 
-    private void init() {
+    private void initMainMenuItems() {
+
+        shopMenu = new ItemBuilder(Material.GOLD_INGOT)
+                .name("Shop")
+                .shiny()
+                .lore("§7Öffne den Shop", "§9")
+                .addFlags(ItemFlag.HIDE_ENCHANTS)
+                .build();
 
         messageSoundOn = new ItemBuilder(Material.PAPER)
                 .name("§5MSG-Sound: " + ChatColor.GREEN + "An")
@@ -103,8 +119,6 @@ public class MenuItems {
                 .name("§3Global-Channel: " + ChatColor.BLUE + "Nur im RP aus")
                 .build();
 
-        String[] s = {""};
-
         roleplayModeOn = new ItemBuilder(Material.FEATHER)
                 .lore("§7Schalte den Rollenspielmodus um", "§7Der RP-Modus schaltet nur gewisse Funktionen ein oder aus. Er symbolisiert §cnicht §7ob du gerade im RP bist, weil du §cimmer im RP bist§7.", "§8")
                 .shiny()
@@ -116,6 +130,21 @@ public class MenuItems {
                 .lore("§7Schalte den Rollenspielmodus um", "§8")
                 .name("§3RP-Modus: §4Aus")
                 .build();
+    }
+
+    private void initShopItems() {
+        armorStand = new ItemBuilder(Material.ARMOR_STAND)
+                .name(Component.text("Rechte für Armor-Stand bearbeiten").color(NamedTextColor.RED))
+                .lore("§7Du bezahlst " + ShopMenu.PRICE_ARMOR_STAND_EDIT + " für 4 Stunden Rechte")
+                .sign("ASEDIT-SHOP")
+                .addFlags(ItemFlag.HIDE_ENCHANTS)
+                .build();
+    }
+
+    private void init() {
+        initMainMenuItems();
+        initShopItems();
+        filler = new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).name(" ").build();
     }
 
     public ItemStack getMessageSoundOff() {
@@ -176,5 +205,17 @@ public class MenuItems {
 
     public ItemStack getRoleplayModeOff() {
         return roleplayModeOff;
+    }
+
+    public ItemStack getArmorStand() {
+        return armorStand;
+    }
+
+    public ItemStack getShopMenu() {
+        return shopMenu;
+    }
+
+    public ItemStack getFiller() {
+        return filler;
     }
 }
