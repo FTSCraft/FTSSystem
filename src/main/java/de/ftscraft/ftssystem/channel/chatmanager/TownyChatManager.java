@@ -10,9 +10,6 @@ import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import de.ftscraft.ftsengine.utils.Ausweis;
-
-import static de.ftscraft.ftsengine.utils.Ausweis.Gender;
-
 import de.ftscraft.ftssystem.channel.Channel;
 import de.ftscraft.ftssystem.channel.ChannelType;
 import de.ftscraft.ftssystem.configs.Messages;
@@ -27,6 +24,8 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
+
+import static de.ftscraft.ftsengine.utils.Ausweis.Gender;
 
 
 public class TownyChatManager extends ChatManager {
