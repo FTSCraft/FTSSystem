@@ -16,6 +16,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -57,14 +58,12 @@ public class JoinListener implements Listener {
             }
         }
 
-        //If user has Noob Protection and is bürger, remove it
-        if (u.hasNoobProtection()) {
-            if (p.hasPermission("ftssystem.bürger")) {
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    u.setNoobProtection(false);
-                    p.sendMessage(Messages.PREFIX + "Da du jetzt Bürger bist und du immer noch die Noobprotection an hattest, wurde sie jetzt entfernt");
-                }, 20 * 4);
-            }
+        //If user has Noob Protection and more than 50h playtime
+        if (u.hasNoobProtection() && p.getStatistic(Statistic.PLAY_ONE_MINUTE) >= 20 * 60 * 60 * 50) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                u.setNoobProtection(false);
+                p.sendMessage(Messages.PREFIX + "Da du jetzt 50h Spielstunden hast und du immer noch die Noobprotection an hattest, wurde sie jetzt entfernt");
+            }, 20 * 4);
         }
 
 
