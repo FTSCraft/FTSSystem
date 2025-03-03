@@ -64,7 +64,7 @@ public class CMDradius implements CommandExecutor {
             double x = radius * Math.sin(i) + loc.x();
             double z = radius * Math.cos(i) + loc.z();
             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.WHITE, 1f);
-            p.spawnParticle(Particle.REDSTONE, x, loc.getY() + .7, z, 2, dustOptions);
+            p.spawnParticle(Particle.DUST, x, loc.getY() + .7, z, 2, dustOptions);
         }
 
 

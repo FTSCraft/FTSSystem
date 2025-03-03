@@ -30,11 +30,11 @@ public class Utils {
 
     static {
         enchantmentReplacements = new HashMap<>();
-        enchantmentReplacements.put(new EnchantmentWithLevel(Enchantment.LOOT_BONUS_BLOCKS, 1), new EnchantmentWithLevel(Enchantment.DIG_SPEED, 2));
-        enchantmentReplacements.put(new EnchantmentWithLevel(Enchantment.LOOT_BONUS_BLOCKS, 2), new EnchantmentWithLevel(Enchantment.DIG_SPEED, 3));
-        enchantmentReplacements.put(new EnchantmentWithLevel(Enchantment.LOOT_BONUS_BLOCKS, 3), new EnchantmentWithLevel(Enchantment.DIG_SPEED, 4));
-        enchantmentReplacements.put(new EnchantmentWithLevel(Enchantment.MENDING, 1), new EnchantmentWithLevel(Enchantment.DURABILITY, 3));
-        enchantmentReplacements.put(new EnchantmentWithLevel(Enchantment.ARROW_INFINITE, 1), new EnchantmentWithLevel(Enchantment.ARROW_DAMAGE, 3));
+        enchantmentReplacements.put(new EnchantmentWithLevel(Enchantment.FORTUNE, 1), new EnchantmentWithLevel(Enchantment.EFFICIENCY, 2));
+        enchantmentReplacements.put(new EnchantmentWithLevel(Enchantment.FORTUNE, 2), new EnchantmentWithLevel(Enchantment.EFFICIENCY, 3));
+        enchantmentReplacements.put(new EnchantmentWithLevel(Enchantment.FORTUNE, 3), new EnchantmentWithLevel(Enchantment.EFFICIENCY, 4));
+        enchantmentReplacements.put(new EnchantmentWithLevel(Enchantment.MENDING, 1), new EnchantmentWithLevel(Enchantment. UNBREAKING, 3));
+        enchantmentReplacements.put(new EnchantmentWithLevel(Enchantment.INFINITY, 1), new EnchantmentWithLevel(Enchantment.POWER, 3));
         enchantmentReplacements.put(new EnchantmentWithLevel(Enchantment.RIPTIDE, 1), new EnchantmentWithLevel(Enchantment.IMPALING, 1));
     }
 
