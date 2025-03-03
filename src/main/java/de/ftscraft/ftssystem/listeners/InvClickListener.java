@@ -340,7 +340,7 @@ public class InvClickListener implements Listener {
 
         content = content.replace("REPLACE", stringBuilder.toString().replace(" ", "+"));
 
-        URL url = null;
+        URL url;
         try {
             url = URI.create("https://api.telegra.ph/" +
                     "createPage?access_token=6cf9217c73e4da3913dc2d9f878423ebd713ff7fd4d9ab6d087b16f48f9b" +
