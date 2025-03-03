@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class PlayerInteractListener implements Listener {
@@ -14,6 +15,13 @@ public class PlayerInteractListener implements Listener {
     public PlayerInteractListener(FtsSystem plugin) {
         ScrollGUI.init();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    }
+
+    @EventHandler
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        if (event.getCause() == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
