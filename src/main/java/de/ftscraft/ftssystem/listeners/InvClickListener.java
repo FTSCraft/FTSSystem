@@ -59,12 +59,10 @@ public class InvClickListener implements Listener {
 
     private void handleShop(InventoryClickEvent event) {
         if (!event.getView().title().equals(ShopMenu.invName)) {
-            System.out.println("not shop");
             return;
         }
         event.setCancelled(true);
         if (event.getCurrentItem().equals(plugin.getMenuItems().getArmorStand())) {
-            System.out.println("bought armor");
             ShopMenu.handleArmorStandBuy(event.getWhoClicked());
         }
     }
