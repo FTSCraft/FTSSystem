@@ -36,10 +36,8 @@ public class MenuItems {
     private void initMainMenuItems() {
 
         shopMenu = new ItemBuilder(Material.GOLD_INGOT)
-                .name("Shop")
-                .shiny()
+                .name(Component.text("Shop").color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD))
                 .lore("§7Öffne den Shop", "§9")
-                .addFlags(ItemFlag.HIDE_ENCHANTS)
                 .build();
 
         messageSoundOn = new ItemBuilder(Material.PAPER)
@@ -135,7 +133,7 @@ public class MenuItems {
     private void initShopItems() {
         armorStand = new ItemBuilder(Material.ARMOR_STAND)
                 .name(Component.text("Rechte für Armor-Stand bearbeiten").color(NamedTextColor.RED))
-                .lore("§7Du bezahlst " + ShopMenu.PRICE_ARMOR_STAND_EDIT + " für 4 Stunden Rechte")
+                .lore("§7Du bezahlst " + ShopMenu.PRICE_ARMOR_STAND_EDIT + " PP für 4 Stunden Rechte")
                 .sign("ASEDIT-SHOP")
                 .addFlags(ItemFlag.HIDE_ENCHANTS)
                 .build();
