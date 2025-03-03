@@ -5,10 +5,12 @@
 
 package de.ftscraft.ftssystem.channel.chatmanager;
 
+import de.ftscraft.ftsengine.utils.Ausweis;
 import de.ftscraft.ftssystem.channel.Channel;
 import de.ftscraft.ftssystem.channel.ChannelType;
 import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.main.User;
+import de.ftscraft.ftssystem.utils.hooks.EngineHook;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -84,6 +86,25 @@ public abstract class ChatManager {
         } catch (Exception ex) {
             plugin.getLogger().severe("Exception while loading channel");
         }
+    }
+
+    public static String getUserDisplayName(User user, Channel channel) {
+        Ausweis ausweis = EngineHook.getEngine().getAusweis(user.getPlayer());
+        String name = user.getPlayer().getName();
+        if (FtsSystem.Instance().getScoreboardManager().isInRoleplayMode(user.getPlayer())
+                && ausweis != null
+                && !channel.name().equalsIgnoreCase("Global")
+                && !channel.name().equalsIgnoreCase("OOC")) {
+            boolean deckname = user.isUsingDeckname();
+            if (!deckname) {
+                name = ausweis.getFirstName()
+                        .replace(" ", "_") + "_" +
+                        ausweis.getLastName().replace(" ", "_");
+            } else {
+                name = ausweis.getSpitzname().replace(" ", "_");
+            }
+        }
+        return name;
     }
 
 }

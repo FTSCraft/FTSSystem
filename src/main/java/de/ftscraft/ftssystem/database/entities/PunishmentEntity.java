@@ -2,7 +2,9 @@ package de.ftscraft.ftssystem.database.entities;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import de.ftscraft.ftssystem.punishment.*;
+import de.ftscraft.ftssystem.punishment.Punishment;
+import de.ftscraft.ftssystem.punishment.PunishmentType;
+import de.ftscraft.ftssystem.punishment.TemporaryPunishment;
 
 import java.util.UUID;
 

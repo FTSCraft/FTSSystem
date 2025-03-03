@@ -13,9 +13,9 @@ import de.ftscraft.ftssystem.poll.Umfrage;
 import de.ftscraft.ftssystem.punishment.PunishmentManager;
 import de.ftscraft.ftssystem.scoreboard.FTSScoreboardManager;
 import de.ftscraft.ftssystem.utils.FileManager;
-import de.ftscraft.ftssystem.utils.hooks.*;
 import de.ftscraft.ftssystem.utils.PremiumManager;
 import de.ftscraft.ftssystem.utils.Runner;
+import de.ftscraft.ftssystem.utils.hooks.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -33,6 +33,8 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 public class FtsSystem extends JavaPlugin {
+
+    private static FtsSystem instance;
 
     private HashMap<String, User> user;
     private Umfrage umfrage = null;
@@ -56,6 +58,9 @@ public class FtsSystem extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        instance = this;
+
         pluginLogger = getLogger();
         chatLogger = Logger.getLogger("Chat");
         hook();
@@ -295,4 +300,9 @@ public class FtsSystem extends JavaPlugin {
     public DiscordHook getDiscordHook() {
         return discordHook;
     }
+
+    public static FtsSystem Instance() {
+        return instance;
+    }
+
 }

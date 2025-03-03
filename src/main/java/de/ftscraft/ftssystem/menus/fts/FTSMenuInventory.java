@@ -49,10 +49,6 @@ public class FTSMenuInventory {
     }
 
     private void load() {
-        ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
-        ItemMeta fillerMeta = filler.getItemMeta();
-        fillerMeta.displayName(Component.text(" "));
-        filler.setItemMeta(fillerMeta);
 
         if (user.hasNoobProtection()) {
             ItemStack noobschutz = new ItemStack(Material.WOODEN_SWORD, 1);
@@ -99,9 +95,12 @@ public class FTSMenuInventory {
             inv.setItem(roleplayModeSlot, plugin.getMenuItems().getRoleplayModeOn());
         } else inv.setItem(roleplayModeSlot, plugin.getMenuItems().getRoleplayModeOff());
 
+        final int shopMenuSlot = 15;
+        inv.setItem(shopMenuSlot, plugin.getMenuItems().getShopMenu());
+
         for (int i = 0; i < 9 * 5; i++) {
             if (inv.getItem(i) == null) {
-                inv.setItem(i, filler.clone());
+                inv.setItem(i, plugin.getMenuItems().getFiller().clone());
             }
         }
     }

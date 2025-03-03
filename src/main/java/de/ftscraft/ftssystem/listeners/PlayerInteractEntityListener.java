@@ -16,7 +16,7 @@ public class PlayerInteractEntityListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Entity cow = event.getRightClicked();
-        if (cow.getType() == EntityType.MUSHROOM_COW) {
+        if (cow.getType() == EntityType.MOOSHROOM) {
             event.setCancelled(true);
         }
     }

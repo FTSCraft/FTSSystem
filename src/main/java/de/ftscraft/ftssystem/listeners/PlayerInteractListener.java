@@ -3,7 +3,6 @@ package de.ftscraft.ftssystem.listeners;
 import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.menus.scroll.ScrollGUI;
 import de.ftscraft.ftsutils.items.ItemReader;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
