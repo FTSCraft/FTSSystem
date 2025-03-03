@@ -153,6 +153,7 @@ public class FtsSystem extends JavaPlugin {
         new CMDrp(this);
         new DecknameCMD(this);
 
+        new PlayerTeleportListener(this);
         new PortalListener(this);
         new DeathListener(this);
         new CommandListener(this);
