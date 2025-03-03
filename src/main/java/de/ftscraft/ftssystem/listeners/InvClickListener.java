@@ -34,8 +34,8 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -62,6 +62,9 @@ public class InvClickListener implements Listener {
             return;
         }
         event.setCancelled(true);
+        if (event.getCurrentItem() == null) {
+            return;
+        }
         if (event.getCurrentItem().equals(plugin.getMenuItems().getArmorStand())) {
             ShopMenu.handleArmorStandBuy(event.getWhoClicked());
         }
@@ -138,7 +141,7 @@ public class InvClickListener implements Listener {
         } else if (id.equalsIgnoreCase("8")) {
             if (plugin.getScoreboardManager() != null)
                 plugin.getScoreboardManager().switchToRoleplayMode(u.getPlayer());
-        } else if(id.equalsIgnoreCase("9")) {
+        } else if (id.equalsIgnoreCase("9")) {
             event.getWhoClicked().openInventory(ShopMenu.getInventory());
             return;
         }
@@ -339,16 +342,21 @@ public class InvClickListener implements Listener {
 
         URL url = null;
         try {
-            url = new URL("https://api.telegra.ph/createPage?access_token=6cf9217c73e4da3913dc2d9f878423ebd713ff7fd4d9ab6d087b16f48f9b&title=Strafen:+" + UUIDFetcher.getName(p) + "&content=" + content + "&author_name=FTS-System");
+            url = URI.create("https://api.telegra.ph/" +
+                    "createPage?access_token=6cf9217c73e4da3913dc2d9f878423ebd713ff7fd4d9ab6d087b16f48f9b" +
+                    "&title=Strafen:+" + UUIDFetcher.getName(p) +
+                    "&content=" + content + "&author_name=FTS-System").toURL();
         } catch (MalformedURLException e) {
             plugin.getLogger().severe("While creating url for telegraph api");
+            return null;
         }
 
-        Scanner sc = null;
+        Scanner sc;
         try {
             sc = new Scanner(url.openStream());
         } catch (IOException e) {
             plugin.getLogger().severe("IO Exception while creating scanner for telegraph url");
+            return null;
         }
 
         StringBuilder sb = new StringBuilder();
