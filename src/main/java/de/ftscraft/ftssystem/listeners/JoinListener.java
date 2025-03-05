@@ -44,37 +44,56 @@ public class JoinListener implements Listener {
 
         User u = new User(plugin, event.getPlayer());
 
-        //If a poll is active and user does not have 'Do Not Disturb' enabled, show it to them
-        if (!u.getDisturbStatus().equals(User.ChannelStatusSwitch.ON)) {
+        checkForPoll(event, u);
+        checkNoobProtection(u, p);
+        checkPremium(p);
 
-            Umfrage umfrage = plugin.getUmfrage();
-            if (umfrage != null && umfrage.isStarted()) {
-                if (!umfrage.getTeilnehmer().contains(event.getPlayer())) {
+    }
 
-                    Bukkit.getScheduler().runTaskLater(plugin, () -> umfrage.sendToPlayer(event.getPlayer()), 20 * 2);
-
-
-                }
-            }
+    /**
+     * If a poll is active and user does not have 'Do Not Disturb' enabled, show it to them
+     */
+    private void checkForPoll(PlayerJoinEvent event, User u) {
+        if (u.getDisturbStatus().equals(User.ChannelStatusSwitch.ON)) {
+            return;
         }
+        Umfrage umfrage = plugin.getUmfrage();
+        if (umfrage == null || !umfrage.isStarted()) {
+            return;
+        }
+        if (umfrage.getTeilnehmer().contains(event.getPlayer())) {
+            return;
+        }
+        Bukkit.getScheduler().runTaskLater(plugin, () -> umfrage.sendToPlayer(event.getPlayer()), 20 * 2);
 
-        //If user has Noob Protection and more than 50h playtime
+    }
+
+    /**
+     * If user has Noob Protection and more than 50h playtime, remove noob protection
+     */
+    private void checkNoobProtection(User u, Player p) {
         if (u.hasNoobProtection() && p.getStatistic(Statistic.PLAY_ONE_MINUTE) >= 20 * 60 * 60 * 50) {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 u.setNoobProtection(false);
                 p.sendMessage(Messages.PREFIX + "Da du jetzt 50h Spielstunden hast und du immer noch die Noobprotection an hattest, wurde sie jetzt entfernt");
             }, 20 * 4);
         }
+    }
 
+    /**
+     * If Luckperms is available, look up if player has premium and if, for how long
+     */
+    private void checkPremium(Player p) {
 
-        //If Luckperms is available, look up if player has premium and if, for how long
-        if (HookManager.LUCK_PERMS_ENABLED) {
-            PremiumManager premiumManager = plugin.getPremiumManager();
-            if (p.hasPermission("group.premium")) {
-                premiumManager.addPremiumPlayer(p.getUniqueId(), LuckPermsHook.getParentDuration(p.getUniqueId(), "Premium"));
-            } else {
-                premiumManager.removePremiumPlayer(p.getUniqueId());
-            }
+        if (!HookManager.LUCK_PERMS_ENABLED) {
+            return;
+        }
+
+        PremiumManager premiumManager = plugin.getPremiumManager();
+        if (p.hasPermission("group.premium")) {
+            premiumManager.addPremiumPlayer(p.getUniqueId(), LuckPermsHook.getParentDuration(p.getUniqueId(), "Premium"));
+        } else {
+            premiumManager.removePremiumPlayer(p.getUniqueId());
         }
 
     }
