@@ -173,6 +173,7 @@ public class FtsSystem extends JavaPlugin {
         new EnchantListener(this);
         new PlayerInteractListener(this);
         new FurnaceBurnListener(this);
+        new CrafterListener(this);
 
         new Runner(this);
 
