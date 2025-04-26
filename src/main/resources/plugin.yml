@@ -75,3 +75,4 @@ commands:
     usage: /rp
     description: Toggelt den RP-Modus
   deckname:
+  animalownership:
