@@ -24,6 +24,7 @@ public class AnimalOwnershipCMD implements CommandExecutor {
     final private String DONT_OWN = "%sDu besitzt dieses Tier nicht".formatted(Messages.MINI_PREFIX);
     final private String NO_ENTITY = "%sDu schaust auf kein Tier (oder bist nicht nah genug)".formatted(Messages.MINI_PREFIX);
     final private String PLAYER_NOT_FOUND = "%sDer Spieler wurde nicht gefunden!".formatted(Messages.MINI_PREFIX);
+    final private String CANT_CHOOSE_YOURSLEF = "%sDu kannst dir nicht selbst die Rechte übertragen.".formatted(Messages.MINI_PREFIX);
     final private String SUCCESS = "%sDu hast das Eigentumsrecht erfolgreich übertragen".formatted(Messages.MINI_PREFIX);
 
     @Override
@@ -55,6 +56,11 @@ public class AnimalOwnershipCMD implements CommandExecutor {
         }
 
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
+
+        if (p == target.getPlayer()) {
+            MiniMsg.msg(p, CANT_CHOOSE_YOURSLEF);
+            return true;
+        }
 
         if (!target.hasPlayedBefore()) {
             MiniMsg.msg(p, PLAYER_NOT_FOUND);
