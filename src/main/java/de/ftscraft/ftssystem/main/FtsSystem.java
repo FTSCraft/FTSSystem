@@ -152,6 +152,7 @@ public class FtsSystem extends JavaPlugin {
         new CMDxpstore(this);
         new CMDrp(this);
         new DecknameCMD(this);
+        new AnimalOwnershipCMD(this);
 
         new PlayerTeleportListener(this);
         new PortalListener(this);
