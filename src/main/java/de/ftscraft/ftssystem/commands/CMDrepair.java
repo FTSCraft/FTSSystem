@@ -115,7 +115,7 @@ public class CMDrepair implements CommandExecutor {
         int slot = findRepairItem(player, repairMaterialTag);
         if (slot == -1) {
             String displayName = getDisplayName(repairMaterialTag);
-            player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Du benötigst ein <green>" + displayName + "</green> zum Reparieren."));
+            player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Du benötigst ein <green>" + displayName + "</green><gray> und </gray><red>" + PRICE + " Taler</red><gray> zum Reparieren.</gray>"));
             return true;
         }
     
