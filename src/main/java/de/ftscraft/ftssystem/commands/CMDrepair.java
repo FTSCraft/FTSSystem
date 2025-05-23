@@ -5,6 +5,7 @@ import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.utils.Utils;
 import de.ftscraft.ftsutils.items.ItemReader;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,9 +47,6 @@ public class CMDrepair implements CommandExecutor {
         materialMap.put("IRON", Material.IRON_INGOT);
         materialMap.put("GOLD", Material.GOLD_INGOT);
         materialMap.put("STONE", Material.STONE);
-        materialMap.put("WOODEN", Material.OAK_PLANKS);
-        materialMap.put("WOOD", Material.OAK_PLANKS);
-        materialMap.put("LEATHER", Material.LEATHER);
         materialMap.put("NETHERITE", Material.NETHERITE_INGOT);
         materialMap.put("EMERALD", Material.EMERALD);
         materialMap.put("COPPER", Material.COPPER_INGOT);
@@ -78,86 +75,104 @@ public class CMDrepair implements CommandExecutor {
             cs.sendMessage(Messages.ONLY_PLAYER);
             return true;
         }
-
+    
         if (!player.hasPermission(PERMISSION)) {
             player.sendMessage(Messages.NO_PERM);
             return true;
         }
-
+    
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta itemMeta = item.getItemMeta();
-
+    
         if (itemMeta == null || item.getType() == Material.AIR) {
             player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Du musst ein Item in der Hand halten."));
             return true;
         }
-
-        if (!(itemMeta instanceof Damageable damageable)) {
-            player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Dieses Item kann keinen Schaden nehmen, daher auch <red>nicht</red> repariert werden."));
-            return true;
-        }
-
-        if (damageable.getDamage() == 0) {
-            player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Dieses Item ist nicht beschädigt."));
-            return true;
-        }
-
+    
         String itemTag = ItemReader.getSign(item);
         if (itemTag == null) {
             itemTag = item.getType().name();
         }
-
-        // Determine repair material or tag based on item tag
+    
         String repairMaterialTag = getRepairMaterialTag(itemTag);
         if (repairMaterialTag == null) {
+            player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Dieses Item kann nicht repariert werden."));
             return true;
         }
-
-        // Check inventory for repair material
-        ItemStack repairItem = findRepairItem(player, repairMaterialTag);
-        if (repairItem == null) {
-            String displayName = getDisplayName(repairMaterialTag);
-            player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Du benötigst <green>1x " + displayName + "</green> zum Reparieren."));
+    
+        if (!(itemMeta instanceof Damageable damageable) || damageable.getDamage() == 0) {
+            player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Dieses Item ist nicht beschädigt."));
             return true;
         }
-
+    
         // Check if player has enough money
         if (!plugin.getEcon().has(player, PRICE)) {
             player.sendMessage(String.format(Messages.NOT_ENOUGH_MONEY, PRICE));
             return true;
         }
-
+    
+        // Check inventory for repair material and find its slot
+        int slot = findRepairItem(player, repairMaterialTag);
+        if (slot == -1) {
+            String displayName = getDisplayName(repairMaterialTag);
+            player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Du benötigst ein <green>" + displayName + "</green> zum Reparieren."));
+            return true;
+        }
+    
         // Remove repair material and money, then repair the item
-        removeItem(player, repairItem);
+        ItemStack repairItem = player.getInventory().getItem(slot);
+        if (repairItem.getAmount() > 1) {
+            repairItem.setAmount(repairItem.getAmount() - 1);
+        } else {
+            player.getInventory().setItem(slot, null);
+        }
+    
         plugin.getEcon().withdrawPlayer(player, PRICE);
         damageable.setDamage(0);
         item.setItemMeta(damageable);
-
-        String displayName = getDisplayName(repairMaterialTag);
-        player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Dein Item wurde repariert. Du hast mit <red>" + PRICE +
-                "</red> Taler und <green>1x " + displayName + "</green> bezahlt."));
-
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 0.4F, 0.8F);
+    
+        player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Dein Item wurde repariert."));
+    
         return true;
     }
 
-    @Nullable
-    private ItemStack findRepairItem(Player player, String repairMaterialTag) {
-        if (repairMaterialTag.contains("PLANKS")) {
-            return findAnyItemWithNamePart(player, "PLANKS");
-        }
-
+    private int findRepairItem(Player player, String repairMaterialTag) {
         Material standardMaterial = materialMap.get(repairMaterialTag);
-        if (standardMaterial != null && playerHasMaterial(player, standardMaterial, 1)) {
-            return new ItemStack(standardMaterial);
+        
+        // Check the inventory for the repair material
+        for (int i = 0; i < player.getInventory().getSize(); i++) {
+            ItemStack item = player.getInventory().getItem(i);
+            if (item == null) continue;
+            
+            // Check for standard material
+            if (standardMaterial != null && item.getType() == standardMaterial) {
+                return i;
+            }
+            
+            // Check for custom items with signs
+            String itemTag = ItemReader.getSign(item);
+            if (itemTag != null && itemTag.equalsIgnoreCase(repairMaterialTag)) {
+                return i;
+            }
         }
-
-        return findItemWithTag(player, repairMaterialTag);
+        
+        return -1;
     }
 
     private String getDisplayName(String materialTag) {
         Material material = materialMap.get(materialTag);
         if (material != null) {
-            return formatString(material.name());
+            String materialName = material.name().toLowerCase();
+            String translationKey;
+            
+            if (material.isBlock()) {
+                translationKey = "block.minecraft." + materialName;
+            } else {
+                translationKey = "item.minecraft." + materialName;
+            }
+            
+            return "<lang:" + translationKey + ">";
         }
 
         return formatString(materialTag);
@@ -175,29 +190,6 @@ public class CMDrepair implements CommandExecutor {
             }
         }
         return result.toString().trim();
-    }
-
-    // Find specific material in player's inventory
-    private ItemStack findAnyItemWithNamePart(Player player, String namePart) {
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && item.getType().name().contains(namePart)) {
-                return item.clone();
-            }
-        }
-        return null;
-    }
-
-    // Find an item with a specific sign tag
-    private ItemStack findItemWithTag(Player player, String tag) {
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null) {
-                String itemTag = ItemReader.getSign(item);
-                if (itemTag != null && itemTag.equalsIgnoreCase(tag)) {
-                    return item.clone();
-                }
-            }
-        }
-        return null;
     }
 
     // Determine repair material or tag based on item tag
@@ -223,51 +215,5 @@ public class CMDrepair implements CommandExecutor {
         }
 
         return null;
-    }
-
-    // Check if player has a specific material in their inventory
-    private boolean playerHasMaterial(Player player, Material material, int amount) {
-        int count = 0;
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && item.getType() == material) {
-                count += item.getAmount();
-                if (count >= amount) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    // Remove a specific item from player's inventory
-    private void removeItem(Player player, ItemStack itemToRemove) {
-        if (itemToRemove == null) return;
-
-        Material material = itemToRemove.getType();
-        String signTag = ItemReader.getSign(itemToRemove);
-
-        for (int i = 0; i < player.getInventory().getSize(); i++) {
-            ItemStack invItem = player.getInventory().getItem(i);
-            if (invItem == null) continue;
-
-            boolean matches = false;
-
-            if (signTag != null) {
-                String invItemTag = ItemReader.getSign(invItem);
-                matches = invItemTag != null && invItemTag.equalsIgnoreCase(signTag);
-            }
-            else {
-                matches = invItem.getType() == material;
-            }
-
-            if (matches) {
-                if (invItem.getAmount() > 1) {
-                    invItem.setAmount(invItem.getAmount() - 1);
-                } else {
-                    player.getInventory().setItem(i, null);
-                }
-                return;
-            }
-        }
     }
 }
