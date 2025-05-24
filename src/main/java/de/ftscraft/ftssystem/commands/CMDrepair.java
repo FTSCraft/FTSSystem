@@ -76,10 +76,6 @@ public class CMDrepair implements CommandExecutor {
             cs.sendMessage(Messages.NO_PERM);
             return true;
         }
-        if (args.length < 1) {
-            cs.sendMessage("Bitte gib einen Spielernamen an.");
-            return true;
-        }
         Player player = Bukkit.getPlayer(args[0]);
         if (player == null) {
             cs.sendMessage("Spieler nicht gefunden.");
