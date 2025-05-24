@@ -4,6 +4,7 @@ import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.utils.Utils;
 import de.ftscraft.ftsutils.items.ItemReader;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -71,8 +72,17 @@ public class CMDrepair implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender cs, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-        if (!(cs instanceof Player player)) {
+        if (cs instanceof Player) {
             cs.sendMessage(Messages.NO_PERM);
+            return true;
+        }
+        if (args.length < 1) {
+            cs.sendMessage("Bitte gib einen Spielernamen an.");
+            return true;
+        }
+        Player player = Bukkit.getPlayer(args[0]);
+        if (player == null) {
+            cs.sendMessage("Spieler nicht gefunden.");
             return true;
         }
 
@@ -123,6 +133,7 @@ public class CMDrepair implements CommandExecutor {
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 0.4F, 0.8F);
     
         player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Dein Item wurde repariert."));
+        cs.sendMessage("Das Item von " + player.getName() + " wurde repariert.");
     
         return true;
     }
