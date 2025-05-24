@@ -112,20 +112,15 @@ public class CMDrepair implements CommandExecutor {
         }
     
         // Check inventory for repair material and find its slot
-        int slot = findRepairItem(player, repairMaterialTag);
-        if (slot == -1) {
+        ItemStack repairItem = findRepairItem(player, repairMaterialTag);
+        if (repairItem == null) {
             String displayName = getDisplayName(repairMaterialTag);
             player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Du benötigst ein <green>" + displayName + "</green><gray> und </gray><red>" + PRICE + " Taler</red><gray> zum Reparieren.</gray>"));
             return true;
         }
     
         // Remove repair material and money, then repair the item
-        ItemStack repairItem = player.getInventory().getItem(slot);
-        if (repairItem.getAmount() > 1) {
-            repairItem.setAmount(repairItem.getAmount() - 1);
-        } else {
-            player.getInventory().setItem(slot, null);
-        }
+        repairItem.setAmount(repairItem.getAmount() - 1);
     
         plugin.getEcon().withdrawPlayer(player, PRICE);
         damageable.setDamage(0);
@@ -137,27 +132,23 @@ public class CMDrepair implements CommandExecutor {
         return true;
     }
 
-    private int findRepairItem(Player player, String repairMaterialTag) {
+    private ItemStack findRepairItem(Player player, String repairMaterialTag) {
         Material standardMaterial = materialMap.get(repairMaterialTag);
-        
-        // Check the inventory for the repair material
+
         for (int i = 0; i < player.getInventory().getSize(); i++) {
             ItemStack item = player.getInventory().getItem(i);
             if (item == null) continue;
-            
-            // Check for standard material
+
             if (standardMaterial != null && item.getType() == standardMaterial) {
-                return i;
+                return item;
             }
-            
-            // Check for custom items with signs
+
             String itemTag = ItemReader.getSign(item);
             if (itemTag != null && itemTag.equalsIgnoreCase(repairMaterialTag)) {
-                return i;
+                return item;
             }
         }
-        
-        return -1;
+        return null;
     }
 
     private String getDisplayName(String materialTag) {
