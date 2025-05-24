@@ -72,15 +72,10 @@ public class CMDrepair implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender cs, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         if (!(cs instanceof Player player)) {
-            cs.sendMessage(Messages.ONLY_PLAYER);
+            cs.sendMessage(Messages.NO_PERM);
             return true;
         }
-    
-        if (!player.hasPermission(PERMISSION)) {
-            player.sendMessage(Messages.NO_PERM);
-            return true;
-        }
-    
+
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta itemMeta = item.getItemMeta();
     
