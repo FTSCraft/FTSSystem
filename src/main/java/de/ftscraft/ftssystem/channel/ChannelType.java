@@ -7,6 +7,6 @@ package de.ftscraft.ftssystem.channel;
 
 public enum ChannelType {
 
-    NORMAL, FACTION_F, FACTION_ALLY
+    NORMAL, FACTION_F, FACTION_ALLY, FACTION_NATION;
 
 }

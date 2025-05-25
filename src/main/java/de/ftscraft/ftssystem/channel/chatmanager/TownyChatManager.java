@@ -7,6 +7,7 @@ package de.ftscraft.ftssystem.channel.chatmanager;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
+import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import de.ftscraft.ftsengine.utils.Ausweis;
@@ -167,6 +168,55 @@ public class TownyChatManager extends ChatManager {
                         b.getPlayer().sendMessage(c);
                     }
                 }
+            }
+
+        }else if (channel.type() == ChannelType.FACTION_NATION) {
+
+            Resident resident = api.getResident(u.getPlayer());
+
+            if (resident == null)
+                return;
+            if (!resident.hasTown()) {
+                u.getPlayer().sendMessage("Du bist in keiner Stadt.");
+                return;
+            }
+
+            Town town;
+            try {
+                town = resident.getTown();
+            } catch (NotRegisteredException e) {
+                throw new RuntimeException(e);
+            }
+
+            if(town != null){
+                Nation nation;
+                try {
+                    nation = town.getNation();
+                } catch (NotRegisteredException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if(nation == null){
+                    u.getPlayer().sendMessage("Deine Stadt ist in keiner Nation.");
+                    return;
+                }
+
+                for (Town nationTown : nation.getTowns()) {
+                    for (Resident b : nationTown.getResidents()) {
+                        if (b.getPlayer() != null) {
+                            if ((plugin.getUser(b.getPlayer()).getEnabledChannels().contains(channel))) {
+                                User t = plugin.getUser(b.getPlayer());
+                                if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.OFF) {
+                                    continue;
+                                } else if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.RP && plugin.getScoreboardManager().isInRoleplayMode(b.getPlayer())) {
+                                    continue;
+                                }
+                                b.getPlayer().sendMessage(c);
+                            }
+                        }
+                    }
+                }
+                
             }
 
         }
