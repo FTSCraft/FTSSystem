@@ -180,21 +180,23 @@ public class FTSScoreboardManager {
             gender = ausweis.getGender();
         else gender = Gender.MALE;
 
+        TeamPrefixs playerRank = TeamPrefixs.NEULING;
         for (TeamPrefixs a : TeamPrefixs.values()) {
             if (p.hasPermission(a.getPermission())) {
-                p.setPlayerListName(a.getPrefix(gender) + " §7| §r" + p.getName());
-                if (afkPlayers.contains(p)) {
-                    p.setPlayerListName(p.getPlayerListName().replaceAll("§.", "§7§m"));
-                }
-                return;
+                playerRank = a;
+                break;
             }
         }
-        TeamPrefixs a = TeamPrefixs.NEULING;
-        if (!playerInRpMode.contains(p))
-            p.setPlayerListName(a.getPrefix(gender) + " §7| §r" + p.getName());
-        else
-            p.setPlayerListName(a.getPrefix(gender) + " §7| §r" + p.getName() + " §7[RP]");
 
+        String displayName = playerRank.getPrefix(gender) + " §7| §r" + p.getName();
+        if (playerInRpMode.contains(p)) {
+            displayName += " §7[RP]";
+        }
+        p.setPlayerListName(displayName);
+
+        if (afkPlayers.contains(p)) {
+            p.setPlayerListName(p.getPlayerListName().replaceAll("§.", "§7§m"));
+        }
     }
 
     public boolean isInRoleplayMode(Player p) {
