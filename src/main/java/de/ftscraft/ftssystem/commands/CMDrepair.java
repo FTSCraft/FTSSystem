@@ -10,7 +10,6 @@ import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -24,20 +23,16 @@ public class CMDrepair implements CommandExecutor {
 
     private final FtsSystem plugin;
     private final static int PRICE = 50;
-    private final String PERMISSION;
-    private final String USAGE;
-    private final Map<String, Material> materialMap;
-    private final Map<String, String> specialItemMap;
+
+    private final Map<String, Material> materialMap = new HashMap<>();
+    private final Map<String, String> specialItemMap = new HashMap<>();
+
 
     public CMDrepair(FtsSystem plugin) {
         this.plugin = plugin;
-        PluginCommand command = plugin.getCommand("repair");
-        command.setExecutor(this);
-        PERMISSION = command.getPermission();
-        USAGE = command.getUsage();
+        //noinspection DataFlowIssue
+        plugin.getCommand("repair").setExecutor(this);
 
-        materialMap = new HashMap<>();
-        specialItemMap = new HashMap<>();
         initMaterialMap();
         initSpecialItemMap();
     }
@@ -71,7 +66,7 @@ public class CMDrepair implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender cs, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender cs, @NotNull Command cmd, @NotNull String label, @NotNull String @NotNull [] args) {
         if (cs instanceof Player) {
             cs.sendMessage(Messages.NO_PERM);
             return true;
@@ -84,34 +79,34 @@ public class CMDrepair implements CommandExecutor {
 
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta itemMeta = item.getItemMeta();
-    
+
         if (itemMeta == null || item.getType() == Material.AIR) {
             player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Du musst ein Item in der Hand halten."));
             return true;
         }
-    
+
         String itemTag = ItemReader.getSign(item);
         if (itemTag == null) {
             itemTag = item.getType().name();
         }
-    
+
         String repairMaterialTag = getRepairMaterialTag(itemTag);
         if (repairMaterialTag == null) {
             player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Dieses Item kann nicht repariert werden."));
             return true;
         }
-    
+
         if (!(itemMeta instanceof Damageable damageable) || damageable.getDamage() == 0) {
             player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Dieses Item ist nicht beschädigt."));
             return true;
         }
-    
+
         // Check if player has enough money
         if (!plugin.getEcon().has(player, PRICE)) {
             player.sendMessage(String.format(Messages.NOT_ENOUGH_MONEY, PRICE));
             return true;
         }
-    
+
         // Check inventory for repair material and find its slot
         ItemStack repairItem = findRepairItem(player, repairMaterialTag);
         if (repairItem == null) {
@@ -119,18 +114,18 @@ public class CMDrepair implements CommandExecutor {
             player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Du benötigst ein <green>" + displayName + "</green><gray> und </gray><red>" + PRICE + " Taler</red><gray> zum Reparieren.</gray>"));
             return true;
         }
-    
+
         // Remove repair material and money, then repair the item
         repairItem.setAmount(repairItem.getAmount() - 1);
-    
+
         plugin.getEcon().withdrawPlayer(player, PRICE);
         damageable.setDamage(0);
         item.setItemMeta(damageable);
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 0.4F, 0.8F);
-    
+
         player.sendMessage(Utils.msg(Messages.MINI_PREFIX + "Dein Item wurde repariert."));
         cs.sendMessage("Das Item von " + player.getName() + " wurde repariert.");
-    
+
         return true;
     }
 
@@ -158,13 +153,13 @@ public class CMDrepair implements CommandExecutor {
         if (material != null) {
             String materialName = material.name().toLowerCase();
             String translationKey;
-            
+
             if (material.isBlock()) {
                 translationKey = "block.minecraft." + materialName;
             } else {
                 translationKey = "item.minecraft." + materialName;
             }
-            
+
             return "<lang:" + translationKey + ">";
         }
 
