@@ -1,6 +1,7 @@
 package de.ftscraft.ftssystem.listeners;
 
 import de.ftscraft.ftssystem.main.FtsSystem;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -17,8 +18,9 @@ public class PlayerInteractEntityListener implements Listener {
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Entity cow = event.getRightClicked();
         if (cow.getType() == EntityType.MOOSHROOM) {
-            event.setCancelled(true);
+            if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.WHEAT) {
+                event.setCancelled(true);
+            }
         }
     }
-
 }
