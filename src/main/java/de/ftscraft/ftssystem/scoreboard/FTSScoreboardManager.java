@@ -93,7 +93,7 @@ public class FTSScoreboardManager {
 
                 Score s8 = objective.getScore("§4--------");
 
-                Score s9 = objective.getScore("§6Taler: §c" + round(plugin.getEcon().getBalance(p), 0));
+                Score s9 = objective.getScore("§6Taler: §c" + plugin.getEcon().getBalance(p));
                 s9.setScore(1);
                 s8.setScore(4);
                 s4.setScore(5);
