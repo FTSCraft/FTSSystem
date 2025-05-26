@@ -175,6 +175,9 @@ public class FtsSystem extends JavaPlugin {
         new PlayerInteractListener(this);
         new FurnaceBurnListener(this);
         new CrafterListener(this);
+        new TeleportListener(this);
+        new PlayerDamageListener(this);
+        new MoveListener(this);
 
         new Runner(this);
 

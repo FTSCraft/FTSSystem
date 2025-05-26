@@ -8,7 +8,6 @@ package de.ftscraft.ftssystem.listeners;
 import de.ftscraft.ftssystem.channel.Channel;
 import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.main.FtsSystem;
-import de.ftscraft.ftssystem.main.User;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -24,14 +23,6 @@ public class CommandListener implements Listener {
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {
-
-        if (event.getMessage().equalsIgnoreCase("/home")) {
-            User user = plugin.getUser(event.getPlayer());
-            if (!user.getFights().isEmpty()) {
-                event.getPlayer().sendMessage("§cDu darfst dich nicht im Kampf tpn");
-                event.setCancelled(true);
-            }
-        }
 
         String[] command = event.getMessage().replaceFirst("/", "").split(" ");
         String cmd = command[0];
