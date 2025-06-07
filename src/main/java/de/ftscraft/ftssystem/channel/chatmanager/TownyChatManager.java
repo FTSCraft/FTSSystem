@@ -7,6 +7,7 @@ package de.ftscraft.ftssystem.channel.chatmanager;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
+import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
@@ -25,6 +26,9 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static de.ftscraft.ftsengine.utils.Ausweis.Gender;
 
@@ -217,12 +221,109 @@ public class TownyChatManager extends ChatManager {
                     }
                 }
                 
+                
+            }
+
+        }else if (channel.type() == ChannelType.FACTION_ALLY) {
+
+            Resident resident = api.getResident(u.getPlayer());
+
+            if (resident == null)
+                return;
+            if (!resident.hasTown()) {
+                u.getPlayer().sendMessage("Du bist in keiner Stadt.");
+                return;
+            }
+
+            Town town;
+            try {
+                town = resident.getTown();
+            } catch (NotRegisteredException e) {
+                throw new RuntimeException(e);
+            }
+
+            if(town != null){
+                Nation nation;
+                try {
+                    nation = town.getNation();
+                } catch (NotRegisteredException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if(nation == null){
+                    u.getPlayer().sendMessage("Deine Stadt ist in keiner Nation.");
+                    return;
+                }
+
+                for (Nation nations : getNations()) {
+                    if(!nation.equals(nations)){
+                        if(nation.isAlliedWith(nations)){
+                            for (Town nationTown : nation.getTowns()) {
+                                for (Resident b : nationTown.getResidents()) {
+                                    if(b.getPlayer() != null){
+                                        if ((plugin.getUser(b.getPlayer()).getEnabledChannels().contains(channel))) {
+                                            User t = plugin.getUser(b.getPlayer());
+                                            if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.OFF) {
+                                                continue;
+                                            } else if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.RP && plugin.getScoreboardManager().isInRoleplayMode(b.getPlayer())) {
+                                                continue;
+                                            }
+                                            b.getPlayer().sendMessage(c);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for (Town nationTown : nation.getTowns()) {
+                    for (Resident b : nationTown.getResidents()) {
+                        Town anotherTown;
+                        try {
+                            anotherTown = b.getTown();
+                        } catch (NotRegisteredException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        if(anotherTown != null){
+                            if(town != anotherTown){
+                                if (b.getPlayer() != null) {
+                                    if ((plugin.getUser(b.getPlayer()).getEnabledChannels().contains(channel))) {
+                                        User t = plugin.getUser(b.getPlayer());
+                                        if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.OFF) {
+                                            continue;
+                                        } else if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.RP && plugin.getScoreboardManager().isInRoleplayMode(b.getPlayer())) {
+                                            continue;
+                                        }
+                                        b.getPlayer().sendMessage(c);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
             }
 
         }
 
         FtsSystem.getChatLogger().info(u.getPlayer().getName() + " [" + channel.prefix() + "] " + msg);
 
+    }
+    
+    private List<Nation> getNations(){
+        List<Nation> nations = new ArrayList<>();
+        for (Resident activeResident : api.getActiveResidents()) {
+            try {
+                if(activeResident.getNation()!=null&&!nations.contains(activeResident.getNation())){
+                    nations.add(activeResident.getNation());
+                }
+            } catch (TownyException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return nations;
     }
 
     private String format(User user, Channel channel, String message) {
