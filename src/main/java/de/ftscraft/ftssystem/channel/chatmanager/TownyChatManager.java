@@ -7,7 +7,6 @@ package de.ftscraft.ftssystem.channel.chatmanager;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
@@ -26,9 +25,6 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static de.ftscraft.ftsengine.utils.Ausweis.Gender;
 
@@ -273,8 +269,6 @@ public class TownyChatManager extends ChatManager {
         Gender gender = (ausweis != null && ausweis.getGender() != null) ? ausweis.getGender() : Gender.MALE;
 
         String prefix = TeamPrefixs.getPrefix(user.getPlayer(), gender);
-        String name = user.getPlayer().getName();
-
 
         formatted = formatted.replace("%fa", getFactionName(user))
                 .replace("%pr", prefix)
@@ -301,9 +295,13 @@ public class TownyChatManager extends ChatManager {
      */
     private String getFactionName(@NotNull User user) {
         String faction = "";
-        if (api.getResident(user.getPlayer()).hasTown()) {
+        Resident resident = api.getResident(user.getPlayer());
+        if (resident == null) {
+            throw new RuntimeException("resident not found for user " + user.getPlayer().getName());
+        }
+        if (resident.hasTown()) {
             try {
-                faction = api.getResident(user.getPlayer()).getTown().getName().replace("_", " ");
+                faction = resident.getTown().getName().replace("_", " ");
             } catch (NotRegisteredException e) {
                 throw new RuntimeException(e);
             }
