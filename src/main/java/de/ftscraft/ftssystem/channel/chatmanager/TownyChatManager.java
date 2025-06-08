@@ -156,21 +156,9 @@ public class TownyChatManager extends ChatManager {
                 throw new RuntimeException(e);
             }
 
-            for (Resident b : town.getResidents()) {
-                if (b.getPlayer() != null) {
-                    if ((plugin.getUser(b.getPlayer()).getEnabledChannels().contains(channel))) {
-                        User t = plugin.getUser(b.getPlayer());
-                        if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.OFF) {
-                            continue;
-                        } else if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.RP && plugin.getScoreboardManager().isInRoleplayMode(b.getPlayer())) {
-                            continue;
-                        }
-                        b.getPlayer().sendMessage(c);
-                    }
-                }
-            }
+            sendMessageToTown(channel, town, c);
 
-        }else if (channel.type() == ChannelType.FACTION_NATION) {
+        } else if (channel.type() == ChannelType.FACTION_NATION) {
 
             Resident resident = api.getResident(u.getPlayer());
 
@@ -188,7 +176,7 @@ public class TownyChatManager extends ChatManager {
                 throw new RuntimeException(e);
             }
 
-            if(town != null){
+            if (town != null) {
                 Nation nation;
                 try {
                     nation = town.getNation();
@@ -196,33 +184,82 @@ public class TownyChatManager extends ChatManager {
                     throw new RuntimeException(e);
                 }
 
-                if(nation == null){
+                if (nation == null) {
                     u.getPlayer().sendMessage("Deine Stadt ist in keiner Nation.");
                     return;
                 }
 
                 for (Town nationTown : nation.getTowns()) {
-                    for (Resident b : nationTown.getResidents()) {
-                        if (b.getPlayer() != null) {
-                            if ((plugin.getUser(b.getPlayer()).getEnabledChannels().contains(channel))) {
-                                User t = plugin.getUser(b.getPlayer());
-                                if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.OFF) {
-                                    continue;
-                                } else if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.RP && plugin.getScoreboardManager().isInRoleplayMode(b.getPlayer())) {
-                                    continue;
-                                }
-                                b.getPlayer().sendMessage(c);
-                            }
-                        }
+                    sendMessageToTown(channel, nationTown, c);
+                }
+
+
+            }
+
+        } else if (channel.type() == ChannelType.FACTION_ALLY) {
+
+            Resident resident = api.getResident(u.getPlayer());
+
+            if (resident == null)
+                return;
+            if (!resident.hasTown()) {
+                u.getPlayer().sendMessage("Du bist in keiner Stadt.");
+                return;
+            }
+
+            Town town;
+            try {
+                town = resident.getTown();
+            } catch (NotRegisteredException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (town != null) {
+                Nation nation;
+                try {
+                    nation = town.getNation();
+                } catch (NotRegisteredException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (nation == null) {
+                    u.getPlayer().sendMessage("Deine Stadt ist in keiner Nation.");
+                    return;
+                }
+
+                for (Nation nations : nation.getAllies()) {
+                    for (Town nationTown : nations.getTowns()) {
+                        sendMessageToTown(channel, nationTown, c);
                     }
                 }
-                
+
+                for (Town nationTown : nation.getTowns()) {
+                    sendMessageToTown(channel, nationTown, c);
+                }
+
             }
 
         }
 
         FtsSystem.getChatLogger().info(u.getPlayer().getName() + " [" + channel.prefix() + "] " + msg);
 
+    }
+
+    private void sendMessageToTown(Channel channel, Town nationTown, TextComponent c) {
+        for (Resident b : nationTown.getResidents()) {
+            if (b.getPlayer() == null) {
+                continue;
+            }
+            if ((plugin.getUser(b.getPlayer()).getEnabledChannels().contains(channel))) {
+                User t = plugin.getUser(b.getPlayer());
+                if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.OFF) {
+                    continue;
+                } else if (t.getFactionChannelStatus() == User.ChannelStatusSwitch.RP && plugin.getScoreboardManager().isInRoleplayMode(b.getPlayer())) {
+                    continue;
+                }
+                b.getPlayer().sendMessage(c);
+            }
+        }
     }
 
     private String format(User user, Channel channel, String message) {
@@ -232,8 +269,6 @@ public class TownyChatManager extends ChatManager {
         Gender gender = (ausweis != null && ausweis.getGender() != null) ? ausweis.getGender() : Gender.MALE;
 
         String prefix = TeamPrefixs.getPrefix(user.getPlayer(), gender);
-        String name = user.getPlayer().getName();
-
 
         formatted = formatted.replace("%fa", getFactionName(user))
                 .replace("%pr", prefix)
@@ -260,9 +295,13 @@ public class TownyChatManager extends ChatManager {
      */
     private String getFactionName(@NotNull User user) {
         String faction = "";
-        if (api.getResident(user.getPlayer()).hasTown()) {
+        Resident resident = api.getResident(user.getPlayer());
+        if (resident == null) {
+            throw new RuntimeException("resident not found for user " + user.getPlayer().getName());
+        }
+        if (resident.hasTown()) {
             try {
-                faction = api.getResident(user.getPlayer()).getTown().getName().replace("_", " ");
+                faction = resident.getTown().getName().replace("_", " ");
             } catch (NotRegisteredException e) {
                 throw new RuntimeException(e);
             }
