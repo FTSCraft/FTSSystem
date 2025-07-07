@@ -178,6 +178,7 @@ public class FtsSystem extends JavaPlugin {
         new TeleportListener(this);
         new PlayerDamageListener(this);
         new MoveListener(this);
+        new EntityDropItemListener(this);
 
         new Runner(this);
 
