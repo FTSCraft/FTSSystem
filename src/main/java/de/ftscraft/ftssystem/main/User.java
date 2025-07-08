@@ -6,11 +6,18 @@
 package de.ftscraft.ftssystem.main;
 
 import de.ftscraft.ftssystem.channel.Channel;
+import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.menus.fts.FTSMenuInventory;
+import de.ftscraft.ftssystem.poll.Umfrage;
+import de.ftscraft.ftssystem.utils.PremiumManager;
+import de.ftscraft.ftssystem.utils.hooks.HookManager;
+import de.ftscraft.ftssystem.utils.hooks.LuckPermsHook;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Statistic;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -297,6 +304,60 @@ public class User {
 
     public void setOocChannelStatus(ChannelStatusSwitch oocChannelStatus) {
         this.oocChannelStatus = oocChannelStatus;
+    }
+
+    public void userStartup() {
+        if (plugin.getScoreboardManager() != null)
+            plugin.getScoreboardManager().setPlayerPrefix(player);
+        checkForPoll();
+        checkNoobProtection();
+        checkPremium();
+    }
+
+    /**
+     * If a poll is active and user does not have 'Do Not Disturb' enabled, show it to them
+     */
+    private void checkForPoll() {
+        if (getDisturbStatus().equals(User.ChannelStatusSwitch.ON)) {
+            return;
+        }
+        Umfrage umfrage = plugin.getUmfrage();
+        if (umfrage == null || !umfrage.isStarted()) {
+            return;
+        }
+        if (umfrage.getTeilnehmer().contains(getPlayer())) {
+            return;
+        }
+        Bukkit.getScheduler().runTaskLater(plugin, () -> umfrage.sendToPlayer(getPlayer()), 20 * 2);
+
+    }
+
+    /**
+     * If user has Noob Protection and more than 50h playtime, remove noob protection
+     */
+    private void checkNoobProtection() {
+        if (hasNoobProtection() && player.getStatistic(Statistic.PLAY_ONE_MINUTE) >= 20 * 60 * 60 * 50) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                setNoobProtection(false);
+                player.sendMessage(Messages.PREFIX + "Da du jetzt 50h Spielstunden hast und du immer noch die Noobprotection an hattest, wurde sie jetzt entfernt");
+            }, 20 * 4);
+        }
+    }
+
+    /**
+     * If Luckperms is available, look up if player has premium and if, for how long
+     */
+    private void checkPremium() {
+        if (!HookManager.LUCK_PERMS_ENABLED) {
+            return;
+        }
+        PremiumManager premiumManager = plugin.getPremiumManager();
+        if (player.hasPermission("group.premium")) {
+            premiumManager.addPremiumPlayer(player.getUniqueId(), LuckPermsHook.getParentDuration(player.getUniqueId(), "Premium"));
+        } else {
+            premiumManager.removePremiumPlayer(player.getUniqueId());
+        }
+
     }
 
 }
