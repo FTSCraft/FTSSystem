@@ -214,6 +214,8 @@ public class FtsSystem extends JavaPlugin {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        loadOnlinePlayers();
     }
 
     public DatabaseManager getDatabaseManager() {
@@ -309,6 +311,13 @@ public class FtsSystem extends JavaPlugin {
 
     public static FtsSystem Instance() {
         return instance;
+    }
+
+    private void loadOnlinePlayers() {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            User user = new User(this, onlinePlayer);
+            user.userStartup();
+        }
     }
 
 }
