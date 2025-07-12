@@ -178,6 +178,7 @@ public class FtsSystem extends JavaPlugin {
         new TeleportListener(this);
         new PlayerDamageListener(this);
         new MoveListener(this);
+        new EntityDropItemListener(this);
 
         new Runner(this);
 
@@ -214,6 +215,8 @@ public class FtsSystem extends JavaPlugin {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        loadOnlinePlayers();
     }
 
     public DatabaseManager getDatabaseManager() {
@@ -309,6 +312,13 @@ public class FtsSystem extends JavaPlugin {
 
     public static FtsSystem Instance() {
         return instance;
+    }
+
+    private void loadOnlinePlayers() {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            User user = new User(this, onlinePlayer);
+            user.userStartup();
+        }
     }
 
 }

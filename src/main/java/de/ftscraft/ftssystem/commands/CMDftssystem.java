@@ -2,6 +2,7 @@ package de.ftscraft.ftssystem.commands;
 
 import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.main.FtsSystem;
+import de.ftscraft.ftsutils.misc.MiniMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.command.Command;
@@ -13,7 +14,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class CMDftssystem implements CommandExecutor {
 
+    private final FtsSystem plugin;
+
     public CMDftssystem(FtsSystem plugin) {
+        this.plugin = plugin;
         plugin.getCommand("ftssystem").setExecutor(this);
     }
 
@@ -75,6 +79,18 @@ public class CMDftssystem implements CommandExecutor {
                     p.sendMessage("§cDu hast " + hours + " Stunden Spielzeit");
                 }
 
+
+            } else if(args[0].equalsIgnoreCase("reload")) {
+
+                if(!p.hasPermission("ftssystem.reload")) {
+                    p.sendMessage(Messages.NO_PERM);
+                    return true;
+                }
+
+                plugin.onDisable();
+                plugin.onEnable();
+
+                MiniMsg.msg(p, Messages.MINI_PREFIX + "Das Plugin wurde erfolgreich neugeladen.");
 
             }
         } else p.sendMessage(Messages.HELP_FTSSYSTEM);
