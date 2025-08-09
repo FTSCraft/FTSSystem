@@ -18,6 +18,7 @@ public enum TeamPrefixs {
     PREMIUM("§cPremium", "§cPremium", "ftsengine.premium", "004Premium"),
     SCHREIBER("§cSchreiber", "§cSchreiberin", "ftsengine.schreiber", "0041Schreib"),
     ARCHITEKT("§eArchitekt", "§eArchitektin", "ftsengine.architekt", "005Architekt"),
+    CREATOR("§eCreator", "§eCreatorin", "ftsengine.creator", "005Creator"),
     RAUBER("§9Räuber", "§9Räuberin", "ftsengine.rauber", "008Rauber"),
     MEJSTER("§9Medikus", "§9Medika", "ftsengine.mejster", "009Mejster"),
     PRIESTER("§9Priester", "§9Priesterin", "ftsengine.priester", "010Priester"),
