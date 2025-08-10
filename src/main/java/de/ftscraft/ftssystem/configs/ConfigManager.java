@@ -5,6 +5,7 @@
 
 package de.ftscraft.ftssystem.configs;
 
+import de.ftscraft.ftssystem.features.ResourcePackManager;
 import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.travelsystem.TravelType;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -32,6 +33,8 @@ public class ConfigManager {
         cfg.addDefault("messages", autoMessages);
         cfg.addDefault("latestPunishID", 0);
         cfg.addDefault("wartung", false);
+        cfg.addDefault(ConfigVal.RESOURCE_PACK_LINK.getPath(), "https://ftscraft.de/wp-content/uploads/2025/08/FTSCraft-Texturepack.zip");
+        cfg.addDefault(ConfigVal.RESOURCE_PACK_HASH.getPath(), "29a0c0627d968c4c4fea9e7288a147fdb5215b0f");
         for (TravelType value : TravelType.values()) {
             cfg.addDefault("travel_price." + value.name().toLowerCase(), value.getPrice());
         }
@@ -54,6 +57,12 @@ public class ConfigManager {
         for (TravelType value : TravelType.values()) {
             value.setPrice(cfg.getInt("travel_price." + value.name().toLowerCase()));
         }
+
+        // Resource Pac
+        ResourcePackManager.setResourcePack(
+                cfg.getString(ConfigVal.RESOURCE_PACK_LINK.getPath()),
+                cfg.getString(ConfigVal.RESOURCE_PACK_HASH.getPath())
+        );
 
     }
 
