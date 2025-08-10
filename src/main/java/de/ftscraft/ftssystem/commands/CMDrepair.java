@@ -46,6 +46,7 @@ public class CMDrepair implements CommandExecutor {
         materialMap.put("NETHERITE", Material.NETHERITE_INGOT);
         materialMap.put("EMERALD", Material.EMERALD);
         materialMap.put("COPPER", Material.COPPER_INGOT);
+        materialMap.put("LEATHER", Material.LEATHER);
     }
 
     private void initSpecialItemMap() {
@@ -60,9 +61,9 @@ public class CMDrepair implements CommandExecutor {
         specialItemMap.put("KUPFERSCHWERT", "COPPER");
         specialItemMap.put("LANZE", "IRON");
         specialItemMap.put("STREITKOLBEN", "NETHERITE");
-        specialItemMap.put("TINY_BACKPACK", "GEHAERTETES_LEDER");
-        specialItemMap.put("LARGE_BACKPACK", "GEHAERTETES_LEDER");
-        specialItemMap.put("ENDER_BACKPACK", "GEHAERTETES_LEDER");
+        specialItemMap.put("TINY_BACKPACK", "LEATHER");
+        specialItemMap.put("LARGE_BACKPACK", "LEATHER");
+        specialItemMap.put("ENDER_BACKPACK", "LEATHER");
     }
 
     @Override
