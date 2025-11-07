@@ -24,6 +24,9 @@ public class MenuItems {
     private ItemStack roleplayModeOn, roleplayModeOff;
 
     private ItemStack armorStand;
+    private ItemStack ownHead;
+    private ItemStack itemFrameInvis, itemFrameUnbreakable, itemFrameInvisUnbreakable;
+    private ItemStack debugStick, debugStickPermission;
 
     private ItemStack filler;
 
@@ -137,6 +140,44 @@ public class MenuItems {
                 .sign("ASEDIT-SHOP")
                 .addFlags(ItemFlag.HIDE_ENCHANTS)
                 .build();
+
+        ownHead = new ItemBuilder(Material.PLAYER_HEAD)
+                .name(Component.text("Dein eigener Kopf").color(NamedTextColor.RED))
+                .lore("§7Du bezahlst " + ShopMenu.PRICE_OWN_HEAD + " PP")
+                .sign("OWN_HEAD-SHOP")
+                .build();
+
+        itemFrameInvis = new ItemBuilder(Material.ITEM_FRAME)
+                .name(Component.text("Unsichtbarer Itemframe").color(NamedTextColor.RED))
+                .lore("§7Du bezahlst %d für einen unsichtbaren, zerstörbaren Rahmen".formatted(ShopMenu.PRICE_FRAME_INVIS))
+                .sign("INVIS_FRAME-SHOP")
+                .build();
+
+        itemFrameUnbreakable = new ItemBuilder(Material.ITEM_FRAME)
+                .name(Component.text("Unzerstörbarer Itemframe").color(NamedTextColor.RED))
+                .lore("§7Du bezahlst %d für einen sichtbaren, unzerstörbaren Rahmen".formatted(ShopMenu.PRICE_FRAME_UNBREAKABLE))
+                .sign("UNBREAKABLE_FRAME-SHOP")
+                .build();
+
+        itemFrameInvisUnbreakable = new ItemBuilder(Material.ITEM_FRAME)
+                .name(Component.text("Unsichtbarer und unzerstörbarer Itemframe").color(NamedTextColor.RED))
+                .lore("§7Du bezahlst %d für einen unsichtbaren, unzerstörbaren Rahmen".formatted(ShopMenu.PRICE_FRAME_BOTH))
+                .sign("UNBREAKABLE_INVIS_FRAME-SHOP")
+                .build();
+
+        debugStick = new ItemBuilder(Material.STICK)
+                .name(Component.text("Debug Stick erhalten").color(NamedTextColor.LIGHT_PURPLE))
+                .lore("§7Du bezahlst %d für einen Debug Stick. Die Permission ihn zu nutzen musst du extra kaufen".formatted(ShopMenu.PRICE_DEBUG_STICK))
+                .sign("DEBUG_STICK-SHOP")
+                .build();
+
+        debugStickPermission = new ItemBuilder(Material.STICK)
+                .name(Component.text("Debug Stick Rechte").color(NamedTextColor.LIGHT_PURPLE))
+                .lore("§7Du bezahlst %d um einen Debug Stick für 2 Stunden nutzen zu können. Den Stick musst du extra kaufen".formatted(ShopMenu.PRICE_DEBUG_STICK_PERMISSION))
+                .sign("DEBUG_STICK_PERM-SHOP")
+                .build();
+
+
     }
 
     private void init() {
@@ -215,5 +256,29 @@ public class MenuItems {
 
     public ItemStack getFiller() {
         return filler;
+    }
+
+    public ItemStack getOwnHead() {
+        return ownHead;
+    }
+
+    public ItemStack getItemFrameInvis() {
+        return itemFrameInvis;
+    }
+
+    public ItemStack getItemFrameUnbreakable() {
+        return itemFrameUnbreakable;
+    }
+
+    public ItemStack getItemFrameInvisUnbreakable() {
+        return itemFrameInvisUnbreakable;
+    }
+
+    public ItemStack getDebugStick() {
+        return debugStick;
+    }
+
+    public ItemStack getDebugStickPermission() {
+        return debugStickPermission;
     }
 }
