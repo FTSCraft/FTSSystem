@@ -171,7 +171,7 @@ public class MenuItems {
                 .sign("DEBUG_STICK-SHOP")
                 .build();
 
-        debugStick = new ItemBuilder(Material.STICK)
+        debugStickPermission = new ItemBuilder(Material.STICK)
                 .name(Component.text("Debug Stick Rechte").color(NamedTextColor.LIGHT_PURPLE))
                 .lore("§7Du bezahlst %d um einen Debug Stick für 2 Stunden nutzen zu können. Den Stick musst du extra kaufen".formatted(ShopMenu.PRICE_DEBUG_STICK_PERMISSION))
                 .sign("DEBUG_STICK_PERM-SHOP")
