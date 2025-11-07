@@ -6,8 +6,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public class ShopMenu {
 
@@ -17,6 +19,8 @@ public class ShopMenu {
     private static Component NOT_ENOUGH_PP_MSG = Component.text("Dafür hast du nicht genug Spielerpunkte!").color(NamedTextColor.RED);
 
     public static final int PRICE_ARMOR_STAND_EDIT = 100,
+            PRICE_DEBUG_STICK = 100,
+            PRICE_DEBUG_STICK_PERMISSION = 50,
             PRICE_OWN_HEAD = 50,
             PRICE_FRAME_INVIS = 25,
             PRICE_FRAME_UNBREAKABLE = 20,
@@ -53,26 +57,46 @@ public class ShopMenu {
     public static void handleItemFrameBuy(HumanEntity humanEntity, int type) {
         String cmd;
         int price;
-        switch (type) {
-            case 0:
+        cmd = switch (type) {
+            case 0 -> {
                 price = PRICE_FRAME_INVIS;
-                cmd = "minecraft:give %s item_frame[entity_data={id:\"minecraft:item_frame\",Invisible:1b}] 1";
-                break;
-            case 1:
+                yield "minecraft:give %s item_frame[entity_data={id:\"minecraft:item_frame\",Invisible:1b}] 1";
+            }
+            case 1 -> {
                 price = PRICE_FRAME_UNBREAKABLE;
-                cmd = "minecraft:give %s item_frame[entity_data={id:\"minecraft:item_frame\",Invulnerable:1b}] 1";
-                break;
-            case 2:
+                yield "minecraft:give %s item_frame[entity_data={id:\"minecraft:item_frame\",Invulnerable:1b}] 1";
+            }
+            case 2 -> {
                 price = PRICE_FRAME_BOTH;
-                cmd = "minecraft:give %s item_frame[entity_data={id:\"minecraft:item_frame\",Invisible:1b,Invulnerable:1b}] 1";
-                break;
-            default:
-                throw new IllegalArgumentException("only accept 0, 1, 2 as arguments for type");
-        }
+                yield "minecraft:give %s item_frame[entity_data={id:\"minecraft:item_frame\",Invisible:1b,Invulnerable:1b}] 1";
+            }
+            default -> throw new IllegalArgumentException("only accept 0, 1, 2 as arguments for type");
+        };
         if (playerPoints.look(humanEntity.getUniqueId()) >= price) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.formatted(humanEntity.getName()));
             playerPoints.take(humanEntity.getUniqueId(), price);
             humanEntity.sendMessage(Component.text("Du hast den Rahmen erhalten.").color(NamedTextColor.RED));
+        } else {
+            humanEntity.sendMessage(NOT_ENOUGH_PP_MSG);
+        }
+    }
+
+    public static void handleDebugStickBuy(HumanEntity humanEntity) {
+        if (playerPoints.look(humanEntity.getUniqueId()) >= PRICE_DEBUG_STICK) {
+            humanEntity.getInventory().addItem(new ItemStack(Material.DEBUG_STICK, 1));
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user %s parent addtemp dummy_debug_stick 2h".formatted(humanEntity.getName()));
+            humanEntity.sendMessage(Component.text("Du hast einen Debug Stick erhalten. Ohne Rechte kannst du ihn aber nicht nutzen.").color(NamedTextColor.RED));
+            playerPoints.take(humanEntity.getUniqueId(), PRICE_DEBUG_STICK);
+        } else {
+            humanEntity.sendMessage(NOT_ENOUGH_PP_MSG);
+        }
+    }
+
+    public static void handleDebugStickPermissionBuy(HumanEntity humanEntity) {
+        if (playerPoints.look(humanEntity.getUniqueId()) >= PRICE_DEBUG_STICK_PERMISSION) {
+
+            humanEntity.sendMessage(Component.text("Du hast nun die Rechte einen Debug-Stick zwei Stunden lang zu nutzen.").color(NamedTextColor.RED));
+            playerPoints.take(humanEntity.getUniqueId(), PRICE_DEBUG_STICK_PERMISSION);
         } else {
             humanEntity.sendMessage(NOT_ENOUGH_PP_MSG);
         }
@@ -92,6 +116,8 @@ public class ShopMenu {
         inventory.setItem(14, FtsSystem.Instance().getMenuItems().getItemFrameInvis());
         inventory.setItem(15, FtsSystem.Instance().getMenuItems().getItemFrameUnbreakable());
         inventory.setItem(16, FtsSystem.Instance().getMenuItems().getItemFrameInvisUnbreakable());
+        inventory.setItem(19, FtsSystem.Instance().getMenuItems().getDebugStick());
+        inventory.setItem(20, FtsSystem.Instance().getMenuItems().getDebugStickPermission());
 
         return inventory;
     }
