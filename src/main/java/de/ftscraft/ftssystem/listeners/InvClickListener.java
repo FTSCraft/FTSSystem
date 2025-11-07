@@ -68,6 +68,9 @@ public class InvClickListener implements Listener {
         if (event.getCurrentItem().equals(plugin.getMenuItems().getArmorStand())) {
             ShopMenu.handleArmorStandBuy(event.getWhoClicked());
         }
+        if (event.getCurrentItem().equals(plugin.getMenuItems().getOwnHead())) {
+            ShopMenu.handleOwnHeadBuy(event.getWhoClicked());
+        }
     }
 
     private void handleScroll(InventoryClickEvent event) {
