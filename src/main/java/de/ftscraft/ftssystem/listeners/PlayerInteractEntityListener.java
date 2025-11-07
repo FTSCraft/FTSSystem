@@ -19,7 +19,7 @@ public class PlayerInteractEntityListener implements Listener {
         Entity cow = event.getRightClicked();
         if (cow.getType() == EntityType.MOOSHROOM) {
             Material handItem = event.getPlayer().getInventory().getItemInMainHand().getType();
-            if (handItem != Material.WHEAT && handItem != Material.SHEARS) {
+            if (handItem == Material.BOWL || handItem == Material.BUCKET) {
                 event.setCancelled(true);
             }
         }
