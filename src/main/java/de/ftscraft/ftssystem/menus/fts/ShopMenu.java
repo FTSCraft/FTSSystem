@@ -84,7 +84,6 @@ public class ShopMenu {
     public static void handleDebugStickBuy(HumanEntity humanEntity) {
         if (playerPoints.look(humanEntity.getUniqueId()) >= PRICE_DEBUG_STICK) {
             humanEntity.getInventory().addItem(new ItemStack(Material.DEBUG_STICK, 1));
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user %s parent addtemp dummy_debug_stick 2h".formatted(humanEntity.getName()));
             humanEntity.sendMessage(Component.text("Du hast einen Debug Stick erhalten. Ohne Rechte kannst du ihn aber nicht nutzen.").color(NamedTextColor.RED));
             playerPoints.take(humanEntity.getUniqueId(), PRICE_DEBUG_STICK);
         } else {
@@ -94,7 +93,7 @@ public class ShopMenu {
 
     public static void handleDebugStickPermissionBuy(HumanEntity humanEntity) {
         if (playerPoints.look(humanEntity.getUniqueId()) >= PRICE_DEBUG_STICK_PERMISSION) {
-
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user %s parent addtemp dummy_debug_stick 2h".formatted(humanEntity.getName()));
             humanEntity.sendMessage(Component.text("Du hast nun die Rechte einen Debug-Stick zwei Stunden lang zu nutzen.").color(NamedTextColor.RED));
             playerPoints.take(humanEntity.getUniqueId(), PRICE_DEBUG_STICK_PERMISSION);
         } else {
