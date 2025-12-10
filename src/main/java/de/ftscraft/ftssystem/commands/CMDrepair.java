@@ -47,6 +47,7 @@ public class CMDrepair implements CommandExecutor {
         materialMap.put("EMERALD", Material.EMERALD);
         materialMap.put("COPPER", Material.COPPER_INGOT);
         materialMap.put("LEATHER", Material.LEATHER);
+        materialMap.put("CONDUIT", Material.CONDUIT);
     }
 
     private void initSpecialItemMap() {
@@ -64,6 +65,8 @@ public class CMDrepair implements CommandExecutor {
         specialItemMap.put("TINY_BACKPACK", "LEATHER");
         specialItemMap.put("LARGE_BACKPACK", "LEATHER");
         specialItemMap.put("ENDER_BACKPACK", "LEATHER");
+        specialItemMap.put("TRIDENT", "CONDUIT");
+        specialItemMap.put("DREIZACK", "CONDUIT");
     }
 
     @Override
