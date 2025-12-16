@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class TeleportListener implements Listener {
 
-    private FtsSystem plugin;
+    private final FtsSystem plugin;
 
     public TeleportListener(FtsSystem plugin) {
         this.plugin = plugin;
@@ -39,7 +39,7 @@ public class TeleportListener implements Listener {
         UUID uuid = player.getUniqueId();
 
         //noinspection deprecation - if someone spoofs it, idc
-        if (!player.isOnGround() && !player.isFlying()) {
+        if (!player.isOnGround() && !player.isFlying() && !player.isInsideVehicle()) {
             MiniMsg.msg(player, Messages.MINI_PREFIX + "Du kannst dich nicht teleportieren wenn du nicht auf dem Boden bist.");
             event.setCancelled(true);
             return;
