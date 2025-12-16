@@ -47,12 +47,15 @@ public class CMDrepair implements CommandExecutor {
         materialMap.put("EMERALD", Material.EMERALD);
         materialMap.put("COPPER", Material.COPPER_INGOT);
         materialMap.put("LEATHER", Material.LEATHER);
+        materialMap.put("TRIDENT", Material.CONDUIT);
     }
 
     private void initSpecialItemMap() {
         // Custom Items with Sign handling
         specialItemMap.put("EMERALDPICKAXE", "EMERALD");
         specialItemMap.put("SENSE", "EMERALD");
+        specialItemMap.put("KLAPPSPATEN", "EMERALD");
+        specialItemMap.put("LAUBSCHNEIDER", "EMERALD");
         specialItemMap.put("FALLAXT", "EMERALD");
         specialItemMap.put("KUPFERAXT", "COPPER");
         specialItemMap.put("KUPFERSPITZHACKE", "COPPER");
