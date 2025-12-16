@@ -54,6 +54,8 @@ public class CMDrepair implements CommandExecutor {
         // Custom Items with Sign handling
         specialItemMap.put("EMERALDPICKAXE", "EMERALD");
         specialItemMap.put("SENSE", "EMERALD");
+        specialItemMap.put("KLAPPSPATEN", "EMERALD");
+        specialItemMap.put("LAUBSCHNEIDER", "EMERALD");
         specialItemMap.put("FALLAXT", "EMERALD");
         specialItemMap.put("KUPFERAXT", "COPPER");
         specialItemMap.put("KUPFERSPITZHACKE", "COPPER");
