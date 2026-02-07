@@ -7,15 +7,18 @@ import de.ftscraft.ftssystem.commands.*;
 import de.ftscraft.ftssystem.configs.ConfigManager;
 import de.ftscraft.ftssystem.configs.ConfigVal;
 import de.ftscraft.ftssystem.database.entities.DatabaseManager;
+import de.ftscraft.ftssystem.features.voterewards.VoteRewardManager;
+import de.ftscraft.ftssystem.features.voterewards.storage.VoteAllRewardsStorage;
 import de.ftscraft.ftssystem.listeners.*;
 import de.ftscraft.ftssystem.menus.fts.MenuItems;
-import de.ftscraft.ftssystem.poll.Umfrage;
+import de.ftscraft.ftssystem.features.poll.Umfrage;
 import de.ftscraft.ftssystem.punishment.PunishmentManager;
 import de.ftscraft.ftssystem.scoreboard.FTSScoreboardManager;
 import de.ftscraft.ftssystem.utils.FileManager;
 import de.ftscraft.ftssystem.utils.PremiumManager;
 import de.ftscraft.ftssystem.utils.Runner;
 import de.ftscraft.ftssystem.utils.hooks.*;
+import de.ftscraft.ftsutils.storage.DataHandler;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -54,12 +57,17 @@ public class FtsSystem extends JavaPlugin {
     private DiscordHook discordHook;
     private static Logger pluginLogger;
     private static Logger chatLogger;
+
     private DatabaseManager databaseManager;
+    private DataHandler dataHandler;
 
     @Override
     public void onEnable() {
 
         instance = this;
+
+        this.dataHandler = DataHandler.forPlugin(this);
+        dataHandler.registerClass(VoteAllRewardsStorage.class);
 
         pluginLogger = getLogger();
         chatLogger = Logger.getLogger("Chat");
@@ -96,6 +104,7 @@ public class FtsSystem extends JavaPlugin {
     }
 
     private void save() {
+        dataHandler.saveStorages();
         configManager.setConfig(ConfigVal.WARTUNG, isInWartung());
         configManager.setConfig(ConfigVal.MESSAGES, configManager.getAutoMessages());
 
@@ -154,6 +163,7 @@ public class FtsSystem extends JavaPlugin {
         new DecknameCMD(this);
         new AnimalOwnershipCMD(this);
         new CMDtexturepack(this);
+        new VoteRewardCMD(this, new VoteRewardManager(dataHandler));
 
         new PlayerTeleportListener(this);
         new PortalListener(this);
@@ -211,6 +221,7 @@ public class FtsSystem extends JavaPlugin {
         fileManager.loadSecrets();
         fileManager.loadPremium();
         premiumManager.checkPremiumPlayers();
+
         try {
             databaseManager = new DatabaseManager(getDataFolder().getAbsolutePath() + "/ftssystem.db");
         } catch (SQLException e) {

@@ -78,3 +78,4 @@ commands:
   animalownership:
   texturepack:
     description: Lade das FTS Texturepack runter!
+  votereward:
