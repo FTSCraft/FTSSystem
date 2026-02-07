@@ -3,7 +3,7 @@
  * halberfan - AfGMedia / AfGeSports
  */
 
-package de.ftscraft.ftssystem.poll;
+package de.ftscraft.ftssystem.features.poll;
 
 import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.main.FtsSystem;

@@ -7,7 +7,7 @@ package de.ftscraft.ftssystem.commands;
 
 import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.main.FtsSystem;
-import de.ftscraft.ftssystem.poll.Umfrage;
+import de.ftscraft.ftssystem.features.poll.Umfrage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

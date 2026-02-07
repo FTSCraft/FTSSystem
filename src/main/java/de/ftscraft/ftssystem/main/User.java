@@ -8,7 +8,7 @@ package de.ftscraft.ftssystem.main;
 import de.ftscraft.ftssystem.channel.Channel;
 import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.menus.fts.FTSMenuInventory;
-import de.ftscraft.ftssystem.poll.Umfrage;
+import de.ftscraft.ftssystem.features.poll.Umfrage;
 import de.ftscraft.ftssystem.utils.PremiumManager;
 import de.ftscraft.ftssystem.utils.hooks.HookManager;
 import de.ftscraft.ftssystem.utils.hooks.LuckPermsHook;
@@ -17,7 +17,6 @@ import org.bukkit.Location;
 import org.bukkit.Statistic;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.File;
 import java.io.IOException;

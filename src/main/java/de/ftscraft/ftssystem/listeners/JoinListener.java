@@ -5,18 +5,11 @@
 
 package de.ftscraft.ftssystem.listeners;
 
-import de.ftscraft.ftssystem.configs.Messages;
 import de.ftscraft.ftssystem.main.FtsSystem;
 import de.ftscraft.ftssystem.main.User;
-import de.ftscraft.ftssystem.poll.Umfrage;
-import de.ftscraft.ftssystem.utils.PremiumManager;
-import de.ftscraft.ftssystem.utils.hooks.HookManager;
-import de.ftscraft.ftssystem.utils.hooks.LuckPermsHook;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
