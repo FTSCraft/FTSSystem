@@ -76,6 +76,6 @@ commands:
     description: Toggelt den RP-Modus
   deckname:
   animalownership:
-  texturepack:
-    description: Lade das FTS Texturepack runter!
+#  texturepack:
+#    description: Lade das FTS Texturepack runter!
   votereward:

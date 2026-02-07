@@ -162,7 +162,7 @@ public class FtsSystem extends JavaPlugin {
         new CMDrp(this);
         new DecknameCMD(this);
         new AnimalOwnershipCMD(this);
-        new CMDtexturepack(this);
+        //new CMDtexturepack(this);
         new VoteRewardCMD(this, new VoteRewardManager(dataHandler));
 
         new PlayerTeleportListener(this);
